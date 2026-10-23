@@ -10,6 +10,7 @@ members = [
     "crates/tpt-hands-soma-adapter",
     "crates/tpt-hands-chrysalis-adapter",
     "crates/tpt-link",
+    "tools/proto-gen",
 ]
 
 [workspace.package]

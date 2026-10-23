@@ -15,7 +15,9 @@ publish.workspace = true
 default = ["std"]
 # `std` implies `alloc`, and adds the std::error::Error impl.
 std = ["alloc"]
-# Enables the encoder, which needs a heap buffer.
-alloc = []
+# Generated message types and the encoder. Needs a heap for Vec and String.
+alloc = ["dep:micropb", "micropb/alloc"]
 
 [dependencies]
+# Runtime for the code generated from proto/. MIT OR Apache-2.0.
+micropb = { version = "0.5.1", default-features = false, features = ["encode", "decode", "enable-64bit"], optional = true }

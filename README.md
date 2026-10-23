@@ -30,7 +30,11 @@ Requires Rust (version pinned in `rust-toolchain.toml`). Common tasks are in the
 ```sh
 just check   # fmt, clippy (warnings are errors), tests
 just deny    # licence and dependency policy (needs cargo-deny)
+just proto   # regenerate protobuf code from proto/ (needs protoc on PATH, or PROTOC set)
 ```
+
+The generated protobuf code is committed, so ordinary builds do not need
+`protoc`. Only regenerating it does. CI fails if the committed code is stale.
 
 ## Licence
 

@@ -84,7 +84,8 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Define `PhysiologicalUpdate`, `PathwayHealth`, `MorphogenesisRequest`, `MorphogenesisAck`, `SafetyEnvelope` and action messages (provisional, see the reconcile item above)
 - [ ] Add telemetry, command/intent and power-handshake messages
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
-- [ ] Generated code: Rust via micropb-gen (std and `no_std`), Go via protoc-gen-go (BSD-3); no prost (blocked: no `protoc` on this machine. Interim: a hand-written codec in `tpt-hands-proto::wire`, byte-identical to Go protobuf output on 7 golden fixtures. Replace with generated code once protoc is available.)
+- [x] Generated code: Rust via micropb-gen 0.5.1 (MIT OR Apache-2.0), no prost. `tools/proto-gen` regenerates `crates/tpt-hands-proto/src/generated/` (protoc 29.3). CI fails if the committed code is stale. Verified against 9 golden fixtures from Go protobuf.
+- [ ] Generated code for Go (protoc-gen-go, BSD-3) — not started; the Go orchestrator needs it
 - [ ] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; fuzzing pending)
 - [x] Frame format: length prefix, CRC, sequence numbers, version byte (`tpt-hands-proto::frame`, CRC-32 in-house)
 

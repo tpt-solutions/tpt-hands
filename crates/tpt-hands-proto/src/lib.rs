@@ -3,9 +3,8 @@
 
 //! Protobuf wire definitions for tpt-hands.
 //!
-//! Generated message types (micropb-gen, no prost) are added once the real
-//! tpt-link schema is imported. Until then this crate holds the link frame
-//! format that every transport carries.
+//! Generated message types (`generated`, from `proto/tpt_hands.proto`, via
+//! micropb, no prost) and the link frame format that every transport carries.
 //!
 //! Features: `std` (default) and `alloc` enable the encoder. Without them the
 //! crate is `no_std` and only decoding is available, which is what the edge
@@ -19,4 +18,4 @@ extern crate alloc;
 
 pub mod frame;
 #[cfg(feature = "alloc")]
-pub mod wire;
+pub mod generated;

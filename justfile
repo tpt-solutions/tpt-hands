@@ -23,3 +23,7 @@ doc:
 # Licence, ban and source policy (needs cargo-deny)
 deny:
     cargo deny check licenses bans sources
+
+# Regenerate the Rust protobuf code from proto/. Needs protoc on PATH, or PROTOC set.
+proto:
+    cargo run -q -p proto-gen

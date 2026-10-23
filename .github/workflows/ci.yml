@@ -37,6 +37,18 @@ jobs:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc --workspace --no-deps
 
+  proto:
+    name: Generated protobuf code is current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Regenerate
+        run: cargo run -q -p proto-gen
+      - name: Fail if the committed code is stale
+        run: git diff --exit-code -- crates/tpt-hands-proto/src/generated
+
   go:
     name: Go (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
