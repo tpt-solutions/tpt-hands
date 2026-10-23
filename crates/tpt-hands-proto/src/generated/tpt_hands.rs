@@ -2022,6 +2022,1782 @@ pub mod tpt_ {
                     size
                 }
             }
+            /// Telemetry sample from an end-effector (SDK type ToolTelemetry).
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct ToolTelemetry {
+                pub r#tool_id: ::alloc::string::String,
+                pub r#timestamp_us: u64,
+                pub r#force_n: f32,
+                pub r#structural_integrity: f32,
+            }
+            impl ToolTelemetry {
+                /// Return a reference to `tool_id`
+                #[inline]
+                pub fn r#tool_id(&self) -> &::alloc::string::String {
+                    &self.r#tool_id
+                }
+                /// Return a mutable reference to `tool_id`
+                #[inline]
+                pub fn mut_tool_id(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#tool_id
+                }
+                /// Set the value of `tool_id`
+                #[inline]
+                pub fn set_tool_id(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `tool_id`. Useful for initializing the message.
+                #[inline]
+                pub fn init_tool_id(mut self, value: ::alloc::string::String) -> Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Return a reference to `timestamp_us`
+                #[inline]
+                pub fn r#timestamp_us(&self) -> &u64 {
+                    &self.r#timestamp_us
+                }
+                /// Return a mutable reference to `timestamp_us`
+                #[inline]
+                pub fn mut_timestamp_us(&mut self) -> &mut u64 {
+                    &mut self.r#timestamp_us
+                }
+                /// Set the value of `timestamp_us`
+                #[inline]
+                pub fn set_timestamp_us(&mut self, value: u64) -> &mut Self {
+                    self.r#timestamp_us = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `timestamp_us`. Useful for initializing the message.
+                #[inline]
+                pub fn init_timestamp_us(mut self, value: u64) -> Self {
+                    self.r#timestamp_us = value.into();
+                    self
+                }
+                /// Return a reference to `force_n`
+                #[inline]
+                pub fn r#force_n(&self) -> &f32 {
+                    &self.r#force_n
+                }
+                /// Return a mutable reference to `force_n`
+                #[inline]
+                pub fn mut_force_n(&mut self) -> &mut f32 {
+                    &mut self.r#force_n
+                }
+                /// Set the value of `force_n`
+                #[inline]
+                pub fn set_force_n(&mut self, value: f32) -> &mut Self {
+                    self.r#force_n = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `force_n`. Useful for initializing the message.
+                #[inline]
+                pub fn init_force_n(mut self, value: f32) -> Self {
+                    self.r#force_n = value.into();
+                    self
+                }
+                /// Return a reference to `structural_integrity`
+                #[inline]
+                pub fn r#structural_integrity(&self) -> &f32 {
+                    &self.r#structural_integrity
+                }
+                /// Return a mutable reference to `structural_integrity`
+                #[inline]
+                pub fn mut_structural_integrity(&mut self) -> &mut f32 {
+                    &mut self.r#structural_integrity
+                }
+                /// Set the value of `structural_integrity`
+                #[inline]
+                pub fn set_structural_integrity(&mut self, value: f32) -> &mut Self {
+                    self.r#structural_integrity = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `structural_integrity`. Useful for initializing the message.
+                #[inline]
+                pub fn init_structural_integrity(mut self, value: f32) -> Self {
+                    self.r#structural_integrity = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for ToolTelemetry {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#tool_id;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#timestamp_us;
+                                {
+                                    let val = decoder.decode_varint64()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            3u32 => {
+                                let mut_ref = &mut self.r#force_n;
+                                {
+                                    let val = decoder.decode_float()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0.0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            4u32 => {
+                                let mut_ref = &mut self.r#structural_integrity;
+                                {
+                                    let val = decoder.decode_float()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0.0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for ToolTelemetry {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.ToolTelemetry.tool_id) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(10usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(4usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(4usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#timestamp_us;
+                        if *val_ref != 0 {
+                            encoder.encode_varint32(16u32)?;
+                            encoder.encode_varint64(*val_ref as _)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#force_n;
+                        if *val_ref != 0.0 {
+                            encoder.encode_varint32(29u32)?;
+                            encoder.encode_float(*val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#structural_integrity;
+                        if *val_ref != 0.0 {
+                            encoder.encode_varint32(37u32)?;
+                            encoder.encode_float(*val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#timestamp_us;
+                        if *val_ref != 0 {
+                            size
+                                += 1usize + ::micropb::size::sizeof_varint64(*val_ref as _);
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#force_n;
+                        if *val_ref != 0.0 {
+                            size += 1usize + 4;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#structural_integrity;
+                        if *val_ref != 0.0 {
+                            size += 1usize + 4;
+                        }
+                    }
+                    size
+                }
+            }
+            /// A command from tpt-cerebrum to an end-effector (SDK type ToolIntent).
+            #[derive(Debug, Default, PartialEq, Clone, Copy)]
+            pub struct GraspIntent {
+                pub r#force_n: f32,
+            }
+            impl GraspIntent {
+                /// Return a reference to `force_n`
+                #[inline]
+                pub fn r#force_n(&self) -> &f32 {
+                    &self.r#force_n
+                }
+                /// Return a mutable reference to `force_n`
+                #[inline]
+                pub fn mut_force_n(&mut self) -> &mut f32 {
+                    &mut self.r#force_n
+                }
+                /// Set the value of `force_n`
+                #[inline]
+                pub fn set_force_n(&mut self, value: f32) -> &mut Self {
+                    self.r#force_n = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `force_n`. Useful for initializing the message.
+                #[inline]
+                pub fn init_force_n(mut self, value: f32) -> Self {
+                    self.r#force_n = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for GraspIntent {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#force_n;
+                                {
+                                    let val = decoder.decode_float()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0.0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for GraspIntent {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(4usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#force_n;
+                        if *val_ref != 0.0 {
+                            encoder.encode_varint32(13u32)?;
+                            encoder.encode_float(*val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#force_n;
+                        if *val_ref != 0.0 {
+                            size += 1usize + 4;
+                        }
+                    }
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone, Copy)]
+            pub struct ReleaseIntent {}
+            impl ReleaseIntent {}
+            impl ::micropb::MessageDecode for ReleaseIntent {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for ReleaseIntent {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone, Copy)]
+            pub struct PrepareReinforcementIntent {
+                pub r#target_force_n: f32,
+            }
+            impl PrepareReinforcementIntent {
+                /// Return a reference to `target_force_n`
+                #[inline]
+                pub fn r#target_force_n(&self) -> &f32 {
+                    &self.r#target_force_n
+                }
+                /// Return a mutable reference to `target_force_n`
+                #[inline]
+                pub fn mut_target_force_n(&mut self) -> &mut f32 {
+                    &mut self.r#target_force_n
+                }
+                /// Set the value of `target_force_n`
+                #[inline]
+                pub fn set_target_force_n(&mut self, value: f32) -> &mut Self {
+                    self.r#target_force_n = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `target_force_n`. Useful for initializing the message.
+                #[inline]
+                pub fn init_target_force_n(mut self, value: f32) -> Self {
+                    self.r#target_force_n = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for PrepareReinforcementIntent {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#target_force_n;
+                                {
+                                    let val = decoder.decode_float()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0.0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for PrepareReinforcementIntent {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(4usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#target_force_n;
+                        if *val_ref != 0.0 {
+                            encoder.encode_varint32(13u32)?;
+                            encoder.encode_float(*val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#target_force_n;
+                        if *val_ref != 0.0 {
+                            size += 1usize + 4;
+                        }
+                    }
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct ToolCommand {
+                pub r#tool_id: ::alloc::string::String,
+                /// GAP: not in DESIGN.md. Added so a command can be acknowledged, the same
+                /// way request_id matches a MorphogenesisAck.
+                pub r#command_id: ::alloc::string::String,
+                pub r#intent: ::core::option::Option<ToolCommand_::Intent>,
+            }
+            impl ToolCommand {
+                /// Return a reference to `tool_id`
+                #[inline]
+                pub fn r#tool_id(&self) -> &::alloc::string::String {
+                    &self.r#tool_id
+                }
+                /// Return a mutable reference to `tool_id`
+                #[inline]
+                pub fn mut_tool_id(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#tool_id
+                }
+                /// Set the value of `tool_id`
+                #[inline]
+                pub fn set_tool_id(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `tool_id`. Useful for initializing the message.
+                #[inline]
+                pub fn init_tool_id(mut self, value: ::alloc::string::String) -> Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Return a reference to `command_id`
+                #[inline]
+                pub fn r#command_id(&self) -> &::alloc::string::String {
+                    &self.r#command_id
+                }
+                /// Return a mutable reference to `command_id`
+                #[inline]
+                pub fn mut_command_id(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#command_id
+                }
+                /// Set the value of `command_id`
+                #[inline]
+                pub fn set_command_id(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#command_id = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `command_id`. Useful for initializing the message.
+                #[inline]
+                pub fn init_command_id(
+                    mut self,
+                    value: ::alloc::string::String,
+                ) -> Self {
+                    self.r#command_id = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for ToolCommand {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#tool_id;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#command_id;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            10u32 => {
+                                let mut_ref = loop {
+                                    if let ::core::option::Option::Some(variant) = &mut self
+                                        .r#intent
+                                    {
+                                        if let ToolCommand_::Intent::Grasp(variant) = &mut *variant {
+                                            break &mut *variant;
+                                        }
+                                    }
+                                    self.r#intent = ::core::option::Option::Some(
+                                        ToolCommand_::Intent::Grasp(
+                                            ::core::default::Default::default(),
+                                        ),
+                                    );
+                                };
+                                mut_ref.decode_len_delimited(decoder)?;
+                            }
+                            11u32 => {
+                                let mut_ref = loop {
+                                    if let ::core::option::Option::Some(variant) = &mut self
+                                        .r#intent
+                                    {
+                                        if let ToolCommand_::Intent::Release(variant) = &mut *variant {
+                                            break &mut *variant;
+                                        }
+                                    }
+                                    self.r#intent = ::core::option::Option::Some(
+                                        ToolCommand_::Intent::Release(
+                                            ::core::default::Default::default(),
+                                        ),
+                                    );
+                                };
+                                mut_ref.decode_len_delimited(decoder)?;
+                            }
+                            12u32 => {
+                                let mut_ref = loop {
+                                    if let ::core::option::Option::Some(variant) = &mut self
+                                        .r#intent
+                                    {
+                                        if let ToolCommand_::Intent::PrepareReinforcement(
+                                            variant,
+                                        ) = &mut *variant {
+                                            break &mut *variant;
+                                        }
+                                    }
+                                    self.r#intent = ::core::option::Option::Some(
+                                        ToolCommand_::Intent::PrepareReinforcement(
+                                            ::core::default::Default::default(),
+                                        ),
+                                    );
+                                };
+                                mut_ref.decode_len_delimited(decoder)?;
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for ToolCommand {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.ToolCommand.tool_id) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.ToolCommand.command_id) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match 'oneof: {
+                        let mut max_size = 0;
+                        match ::micropb::const_map!(
+                            ::micropb::const_map!(< GraspIntent as
+                            ::micropb::MessageEncode > ::MAX_SIZE, | size |
+                            ::micropb::size::sizeof_len_record(size)), | size | size +
+                            1usize
+                        ) {
+                            ::core::result::Result::Ok(size) => {
+                                if size > max_size {
+                                    max_size = size;
+                                }
+                            }
+                            ::core::result::Result::Err(err) => {
+                                break 'oneof (::core::result::Result::<usize, _>::Err(err));
+                            }
+                        }
+                        match ::micropb::const_map!(
+                            ::micropb::const_map!(< ReleaseIntent as
+                            ::micropb::MessageEncode > ::MAX_SIZE, | size |
+                            ::micropb::size::sizeof_len_record(size)), | size | size +
+                            1usize
+                        ) {
+                            ::core::result::Result::Ok(size) => {
+                                if size > max_size {
+                                    max_size = size;
+                                }
+                            }
+                            ::core::result::Result::Err(err) => {
+                                break 'oneof (::core::result::Result::<usize, _>::Err(err));
+                            }
+                        }
+                        match ::micropb::const_map!(
+                            ::micropb::const_map!(< PrepareReinforcementIntent as
+                            ::micropb::MessageEncode > ::MAX_SIZE, | size |
+                            ::micropb::size::sizeof_len_record(size)), | size | size +
+                            1usize
+                        ) {
+                            ::core::result::Result::Ok(size) => {
+                                if size > max_size {
+                                    max_size = size;
+                                }
+                            }
+                            ::core::result::Result::Err(err) => {
+                                break 'oneof (::core::result::Result::<usize, _>::Err(err));
+                            }
+                        }
+                        ::core::result::Result::Ok(max_size)
+                    } {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#command_id;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(18u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    if let Some(oneof) = &self.r#intent {
+                        match &*oneof {
+                            ToolCommand_::Intent::Grasp(val_ref) => {
+                                let val_ref = &*val_ref;
+                                encoder.encode_varint32(82u32)?;
+                                val_ref.encode_len_delimited(encoder)?;
+                            }
+                            ToolCommand_::Intent::Release(val_ref) => {
+                                let val_ref = &*val_ref;
+                                encoder.encode_varint32(90u32)?;
+                                val_ref.encode_len_delimited(encoder)?;
+                            }
+                            ToolCommand_::Intent::PrepareReinforcement(val_ref) => {
+                                let val_ref = &*val_ref;
+                                encoder.encode_varint32(98u32)?;
+                                val_ref.encode_len_delimited(encoder)?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#command_id;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    if let Some(oneof) = &self.r#intent {
+                        match &*oneof {
+                            ToolCommand_::Intent::Grasp(val_ref) => {
+                                let val_ref = &*val_ref;
+                                size
+                                    += 1usize
+                                        + ::micropb::size::sizeof_len_record(
+                                            val_ref.compute_size(),
+                                        );
+                            }
+                            ToolCommand_::Intent::Release(val_ref) => {
+                                let val_ref = &*val_ref;
+                                size
+                                    += 1usize
+                                        + ::micropb::size::sizeof_len_record(
+                                            val_ref.compute_size(),
+                                        );
+                            }
+                            ToolCommand_::Intent::PrepareReinforcement(val_ref) => {
+                                let val_ref = &*val_ref;
+                                size
+                                    += 1usize
+                                        + ::micropb::size::sizeof_len_record(
+                                            val_ref.compute_size(),
+                                        );
+                            }
+                        }
+                    }
+                    size
+                }
+            }
+            /// Inner types for `ToolCommand`
+            pub mod ToolCommand_ {
+                #[derive(Debug, PartialEq, Clone)]
+                pub enum Intent {
+                    Grasp(super::GraspIntent),
+                    Release(super::ReleaseIntent),
+                    PrepareReinforcement(super::PrepareReinforcementIntent),
+                }
+            }
+            /// Result of a command, returned to tpt-cerebrum.
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct CommandAck {
+                pub r#command_id: ::alloc::string::String,
+                pub r#accepted: bool,
+                /// set when not accepted, e.g. "exceeds capability"
+                pub r#reason: ::alloc::string::String,
+            }
+            impl CommandAck {
+                /// Return a reference to `command_id`
+                #[inline]
+                pub fn r#command_id(&self) -> &::alloc::string::String {
+                    &self.r#command_id
+                }
+                /// Return a mutable reference to `command_id`
+                #[inline]
+                pub fn mut_command_id(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#command_id
+                }
+                /// Set the value of `command_id`
+                #[inline]
+                pub fn set_command_id(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#command_id = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `command_id`. Useful for initializing the message.
+                #[inline]
+                pub fn init_command_id(
+                    mut self,
+                    value: ::alloc::string::String,
+                ) -> Self {
+                    self.r#command_id = value.into();
+                    self
+                }
+                /// Return a reference to `accepted`
+                #[inline]
+                pub fn r#accepted(&self) -> &bool {
+                    &self.r#accepted
+                }
+                /// Return a mutable reference to `accepted`
+                #[inline]
+                pub fn mut_accepted(&mut self) -> &mut bool {
+                    &mut self.r#accepted
+                }
+                /// Set the value of `accepted`
+                #[inline]
+                pub fn set_accepted(&mut self, value: bool) -> &mut Self {
+                    self.r#accepted = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `accepted`. Useful for initializing the message.
+                #[inline]
+                pub fn init_accepted(mut self, value: bool) -> Self {
+                    self.r#accepted = value.into();
+                    self
+                }
+                /// Return a reference to `reason`
+                #[inline]
+                pub fn r#reason(&self) -> &::alloc::string::String {
+                    &self.r#reason
+                }
+                /// Return a mutable reference to `reason`
+                #[inline]
+                pub fn mut_reason(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#reason
+                }
+                /// Set the value of `reason`
+                #[inline]
+                pub fn set_reason(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#reason = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `reason`. Useful for initializing the message.
+                #[inline]
+                pub fn init_reason(mut self, value: ::alloc::string::String) -> Self {
+                    self.r#reason = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for CommandAck {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#command_id;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#accepted;
+                                {
+                                    let val = decoder.decode_bool()?;
+                                    let val_ref = &val;
+                                    if *val_ref {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            3u32 => {
+                                let mut_ref = &mut self.r#reason;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for CommandAck {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.CommandAck.command_id) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(1usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.CommandAck.reason) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#command_id;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#accepted;
+                        if *val_ref {
+                            encoder.encode_varint32(16u32)?;
+                            encoder.encode_bool(*val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#reason;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(26u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#command_id;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#accepted;
+                        if *val_ref {
+                            size += 1usize + 1;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#reason;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    size
+                }
+            }
+            /// Power handshake, sent in the order DESIGN.md section 7 gives: data pins mate
+            /// first, then this challenge/response, then the relay closes. Sizes follow
+            /// Ed25519 (RFC 8032): 32-byte public key, 64-byte signature.
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct HandshakeHello {
+                pub r#tool_id: ::alloc::string::String,
+                /// fresh random bytes from the device, 16 or more
+                pub r#nonce: ::alloc::vec::Vec<u8>,
+                /// monotonic per device, for replay detection
+                pub r#counter: u64,
+            }
+            impl HandshakeHello {
+                /// Return a reference to `tool_id`
+                #[inline]
+                pub fn r#tool_id(&self) -> &::alloc::string::String {
+                    &self.r#tool_id
+                }
+                /// Return a mutable reference to `tool_id`
+                #[inline]
+                pub fn mut_tool_id(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#tool_id
+                }
+                /// Set the value of `tool_id`
+                #[inline]
+                pub fn set_tool_id(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `tool_id`. Useful for initializing the message.
+                #[inline]
+                pub fn init_tool_id(mut self, value: ::alloc::string::String) -> Self {
+                    self.r#tool_id = value.into();
+                    self
+                }
+                /// Return a reference to `nonce`
+                #[inline]
+                pub fn r#nonce(&self) -> &::alloc::vec::Vec<u8> {
+                    &self.r#nonce
+                }
+                /// Return a mutable reference to `nonce`
+                #[inline]
+                pub fn mut_nonce(&mut self) -> &mut ::alloc::vec::Vec<u8> {
+                    &mut self.r#nonce
+                }
+                /// Set the value of `nonce`
+                #[inline]
+                pub fn set_nonce(&mut self, value: ::alloc::vec::Vec<u8>) -> &mut Self {
+                    self.r#nonce = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `nonce`. Useful for initializing the message.
+                #[inline]
+                pub fn init_nonce(mut self, value: ::alloc::vec::Vec<u8>) -> Self {
+                    self.r#nonce = value.into();
+                    self
+                }
+                /// Return a reference to `counter`
+                #[inline]
+                pub fn r#counter(&self) -> &u64 {
+                    &self.r#counter
+                }
+                /// Return a mutable reference to `counter`
+                #[inline]
+                pub fn mut_counter(&mut self) -> &mut u64 {
+                    &mut self.r#counter
+                }
+                /// Set the value of `counter`
+                #[inline]
+                pub fn set_counter(&mut self, value: u64) -> &mut Self {
+                    self.r#counter = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `counter`. Useful for initializing the message.
+                #[inline]
+                pub fn init_counter(mut self, value: u64) -> Self {
+                    self.r#counter = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for HandshakeHello {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#tool_id;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#nonce;
+                                {
+                                    decoder
+                                        .decode_bytes(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            3u32 => {
+                                let mut_ref = &mut self.r#counter;
+                                {
+                                    let val = decoder.decode_varint64()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for HandshakeHello {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.HandshakeHello.tool_id) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.HandshakeHello.nonce) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(10usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#nonce;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(18u32)?;
+                            encoder.encode_bytes(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#counter;
+                        if *val_ref != 0 {
+                            encoder.encode_varint32(24u32)?;
+                            encoder.encode_varint64(*val_ref as _)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#tool_id;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#nonce;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#counter;
+                        if *val_ref != 0 {
+                            size
+                                += 1usize + ::micropb::size::sizeof_varint64(*val_ref as _);
+                        }
+                    }
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct HandshakeChallenge {
+                /// the source's own nonce, to be signed by the device
+                pub r#nonce: ::alloc::vec::Vec<u8>,
+            }
+            impl HandshakeChallenge {
+                /// Return a reference to `nonce`
+                #[inline]
+                pub fn r#nonce(&self) -> &::alloc::vec::Vec<u8> {
+                    &self.r#nonce
+                }
+                /// Return a mutable reference to `nonce`
+                #[inline]
+                pub fn mut_nonce(&mut self) -> &mut ::alloc::vec::Vec<u8> {
+                    &mut self.r#nonce
+                }
+                /// Set the value of `nonce`
+                #[inline]
+                pub fn set_nonce(&mut self, value: ::alloc::vec::Vec<u8>) -> &mut Self {
+                    self.r#nonce = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `nonce`. Useful for initializing the message.
+                #[inline]
+                pub fn init_nonce(mut self, value: ::alloc::vec::Vec<u8>) -> Self {
+                    self.r#nonce = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for HandshakeChallenge {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#nonce;
+                                {
+                                    decoder
+                                        .decode_bytes(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for HandshakeChallenge {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.HandshakeChallenge.nonce) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#nonce;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_bytes(val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#nonce;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct HandshakeResponse {
+                /// 32 bytes
+                pub r#public_key: ::alloc::vec::Vec<u8>,
+                /// 64 bytes, over the hello and challenge nonces
+                pub r#signature: ::alloc::vec::Vec<u8>,
+                pub r#counter: u64,
+            }
+            impl HandshakeResponse {
+                /// Return a reference to `public_key`
+                #[inline]
+                pub fn r#public_key(&self) -> &::alloc::vec::Vec<u8> {
+                    &self.r#public_key
+                }
+                /// Return a mutable reference to `public_key`
+                #[inline]
+                pub fn mut_public_key(&mut self) -> &mut ::alloc::vec::Vec<u8> {
+                    &mut self.r#public_key
+                }
+                /// Set the value of `public_key`
+                #[inline]
+                pub fn set_public_key(
+                    &mut self,
+                    value: ::alloc::vec::Vec<u8>,
+                ) -> &mut Self {
+                    self.r#public_key = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `public_key`. Useful for initializing the message.
+                #[inline]
+                pub fn init_public_key(mut self, value: ::alloc::vec::Vec<u8>) -> Self {
+                    self.r#public_key = value.into();
+                    self
+                }
+                /// Return a reference to `signature`
+                #[inline]
+                pub fn r#signature(&self) -> &::alloc::vec::Vec<u8> {
+                    &self.r#signature
+                }
+                /// Return a mutable reference to `signature`
+                #[inline]
+                pub fn mut_signature(&mut self) -> &mut ::alloc::vec::Vec<u8> {
+                    &mut self.r#signature
+                }
+                /// Set the value of `signature`
+                #[inline]
+                pub fn set_signature(
+                    &mut self,
+                    value: ::alloc::vec::Vec<u8>,
+                ) -> &mut Self {
+                    self.r#signature = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `signature`. Useful for initializing the message.
+                #[inline]
+                pub fn init_signature(mut self, value: ::alloc::vec::Vec<u8>) -> Self {
+                    self.r#signature = value.into();
+                    self
+                }
+                /// Return a reference to `counter`
+                #[inline]
+                pub fn r#counter(&self) -> &u64 {
+                    &self.r#counter
+                }
+                /// Return a mutable reference to `counter`
+                #[inline]
+                pub fn mut_counter(&mut self) -> &mut u64 {
+                    &mut self.r#counter
+                }
+                /// Set the value of `counter`
+                #[inline]
+                pub fn set_counter(&mut self, value: u64) -> &mut Self {
+                    self.r#counter = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `counter`. Useful for initializing the message.
+                #[inline]
+                pub fn init_counter(mut self, value: u64) -> Self {
+                    self.r#counter = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for HandshakeResponse {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#public_key;
+                                {
+                                    decoder
+                                        .decode_bytes(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#signature;
+                                {
+                                    decoder
+                                        .decode_bytes(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            3u32 => {
+                                let mut_ref = &mut self.r#counter;
+                                {
+                                    let val = decoder.decode_varint64()?;
+                                    let val_ref = &val;
+                                    if *val_ref != 0 {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for HandshakeResponse {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.HandshakeResponse.public_key) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.HandshakeResponse.signature) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(10usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#public_key;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(10u32)?;
+                            encoder.encode_bytes(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#signature;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(18u32)?;
+                            encoder.encode_bytes(val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#counter;
+                        if *val_ref != 0 {
+                            encoder.encode_varint32(24u32)?;
+                            encoder.encode_varint64(*val_ref as _)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#public_key;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#signature;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#counter;
+                        if *val_ref != 0 {
+                            size
+                                += 1usize + ::micropb::size::sizeof_varint64(*val_ref as _);
+                        }
+                    }
+                    size
+                }
+            }
+            #[derive(Debug, Default, PartialEq, Clone)]
+            pub struct RelayState {
+                pub r#relay_closed: bool,
+                /// set when the relay stays open
+                pub r#reason: ::alloc::string::String,
+            }
+            impl RelayState {
+                /// Return a reference to `relay_closed`
+                #[inline]
+                pub fn r#relay_closed(&self) -> &bool {
+                    &self.r#relay_closed
+                }
+                /// Return a mutable reference to `relay_closed`
+                #[inline]
+                pub fn mut_relay_closed(&mut self) -> &mut bool {
+                    &mut self.r#relay_closed
+                }
+                /// Set the value of `relay_closed`
+                #[inline]
+                pub fn set_relay_closed(&mut self, value: bool) -> &mut Self {
+                    self.r#relay_closed = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `relay_closed`. Useful for initializing the message.
+                #[inline]
+                pub fn init_relay_closed(mut self, value: bool) -> Self {
+                    self.r#relay_closed = value.into();
+                    self
+                }
+                /// Return a reference to `reason`
+                #[inline]
+                pub fn r#reason(&self) -> &::alloc::string::String {
+                    &self.r#reason
+                }
+                /// Return a mutable reference to `reason`
+                #[inline]
+                pub fn mut_reason(&mut self) -> &mut ::alloc::string::String {
+                    &mut self.r#reason
+                }
+                /// Set the value of `reason`
+                #[inline]
+                pub fn set_reason(
+                    &mut self,
+                    value: ::alloc::string::String,
+                ) -> &mut Self {
+                    self.r#reason = value.into();
+                    self
+                }
+                /// Builder method that sets the value of `reason`. Useful for initializing the message.
+                #[inline]
+                pub fn init_reason(mut self, value: ::alloc::string::String) -> Self {
+                    self.r#reason = value.into();
+                    self
+                }
+            }
+            impl ::micropb::MessageDecode for RelayState {
+                fn decode<IMPL_MICROPB_READ: ::micropb::PbRead>(
+                    &mut self,
+                    decoder: &mut ::micropb::PbDecoder<IMPL_MICROPB_READ>,
+                    len: usize,
+                ) -> Result<(), ::micropb::DecodeError<IMPL_MICROPB_READ::Error>> {
+                    use ::micropb::{PbBytes, PbString, PbVec, PbMap, FieldDecode};
+                    let before = decoder.bytes_read();
+                    while decoder.bytes_read() - before < len {
+                        let tag = decoder.decode_tag()?;
+                        match tag.field_num() {
+                            0 => return Err(::micropb::DecodeError::ZeroField),
+                            1u32 => {
+                                let mut_ref = &mut self.r#relay_closed;
+                                {
+                                    let val = decoder.decode_bool()?;
+                                    let val_ref = &val;
+                                    if *val_ref {
+                                        *mut_ref = val as _;
+                                    }
+                                };
+                            }
+                            2u32 => {
+                                let mut_ref = &mut self.r#reason;
+                                {
+                                    decoder
+                                        .decode_string(mut_ref, ::micropb::Presence::Implicit)?;
+                                };
+                            }
+                            _ => {
+                                decoder.skip_wire_value(tag.wire_type())?;
+                            }
+                        }
+                    }
+                    Ok(())
+                }
+            }
+            impl ::micropb::MessageEncode for RelayState {
+                const MAX_SIZE: ::core::result::Result<usize, &'static str> = 'msg: {
+                    let mut max_size = 0;
+                    match ::micropb::const_map!(
+                        ::core::result::Result::Ok(1usize), | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    match ::micropb::const_map!(
+                        ::core::result::Result:: < usize, & 'static str >
+                        ::Err("(.tpt.hands.v1.RelayState.reason) unbounded string or bytes"),
+                        | size | size + 1usize
+                    ) {
+                        ::core::result::Result::Ok(size) => {
+                            max_size += size;
+                        }
+                        ::core::result::Result::Err(err) => {
+                            break 'msg (::core::result::Result::<usize, _>::Err(err));
+                        }
+                    }
+                    ::core::result::Result::Ok(max_size)
+                };
+                fn encode<IMPL_MICROPB_WRITE: ::micropb::PbWrite>(
+                    &self,
+                    encoder: &mut ::micropb::PbEncoder<IMPL_MICROPB_WRITE>,
+                ) -> Result<(), IMPL_MICROPB_WRITE::Error> {
+                    use ::micropb::{PbMap, FieldEncode};
+                    {
+                        let val_ref = &self.r#relay_closed;
+                        if *val_ref {
+                            encoder.encode_varint32(8u32)?;
+                            encoder.encode_bool(*val_ref)?;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#reason;
+                        if !val_ref.is_empty() {
+                            encoder.encode_varint32(18u32)?;
+                            encoder.encode_string(val_ref)?;
+                        }
+                    }
+                    Ok(())
+                }
+                fn compute_size(&self) -> usize {
+                    use ::micropb::{PbMap, FieldEncode};
+                    let mut size = 0;
+                    {
+                        let val_ref = &self.r#relay_closed;
+                        if *val_ref {
+                            size += 1usize + 1;
+                        }
+                    }
+                    {
+                        let val_ref = &self.r#reason;
+                        if !val_ref.is_empty() {
+                            size
+                                += 1usize
+                                    + ::micropb::size::sizeof_len_record(val_ref.len());
+                        }
+                    }
+                    size
+                }
+            }
             #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
             #[repr(transparent)]
             pub struct PathwayState(pub i32);

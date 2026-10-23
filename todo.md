@@ -82,7 +82,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Wire protocol (`tpt-hands-proto`)
 - [ ] Reconcile spec Protobuf messages with the real tpt-link schema (PROVISIONAL draft at `proto/tpt_hands.proto`, transcribed from DESIGN.md section 6; no real tpt-link `.proto` is available on this machine. Gap found: the request has no id to match the ack, so `request_id` was added as field 2.)
 - [x] Define `PhysiologicalUpdate`, `PathwayHealth`, `MorphogenesisRequest`, `MorphogenesisAck`, `SafetyEnvelope` and action messages (provisional, see the reconcile item above)
-- [ ] Add telemetry, command/intent and power-handshake messages
+- [x] Add telemetry, command/intent and power-handshake messages (PROVISIONAL, drafted from the spec wording. Handshake shapes only: the security design is Phase 3. Gap: `command_id` added to `ToolCommand` so commands can be acked. 8 golden fixtures from Go protobuf.)
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
 - [x] Generated code: Rust via micropb-gen 0.5.1 (MIT OR Apache-2.0), no prost. `tools/proto-gen` regenerates `crates/tpt-hands-proto/src/generated/` (protoc 29.3). CI fails if the committed code is stale. Verified against 9 golden fixtures from Go protobuf.
 - [ ] Generated code for Go (protoc-gen-go, BSD-3) — not started; the Go orchestrator needs it

@@ -167,3 +167,114 @@ fn truncated_input_is_an_error() {
     let mut m = PhysiologicalUpdate::default();
     assert!(m.decode_from_bytes(&[0x0A, 0x05, b'a']).is_err());
 }
+
+// ---- Telemetry, commands and power handshake (provisional messages) --------
+
+use tpt_hands_proto::generated::v1::ToolCommand_::Intent;
+use tpt_hands_proto::generated::v1::{
+    CommandAck, GraspIntent, HandshakeHello, HandshakeResponse, PrepareReinforcementIntent,
+    RelayState, ReleaseIntent, ToolCommand, ToolTelemetry,
+};
+
+#[test]
+fn telemetry_matches_go() {
+    let want = hex("0a0668616e642d30102a1d00004841250000803f");
+    let value = ToolTelemetry {
+        tool_id: "hand-0".into(),
+        timestamp_us: 42,
+        force_n: 12.5,
+        structural_integrity: 1.0,
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<ToolTelemetry>(&want), value);
+}
+
+#[test]
+fn grasp_command_matches_go() {
+    let want = hex("0a0668616e642d301205636d642d3952050d00004841");
+    let value = ToolCommand {
+        tool_id: "hand-0".into(),
+        command_id: "cmd-9".into(),
+        intent: Some(Intent::Grasp(GraspIntent { force_n: 12.5 })),
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<ToolCommand>(&want), value);
+}
+
+#[test]
+fn release_command_matches_go() {
+    let want = hex("0a0668616e642d301206636d642d31305a00");
+    let value = ToolCommand {
+        tool_id: "hand-0".into(),
+        command_id: "cmd-10".into(),
+        intent: Some(Intent::Release(ReleaseIntent {})),
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<ToolCommand>(&want), value);
+}
+
+#[test]
+fn prepare_command_matches_go() {
+    let want = hex("0a0668616e642d301206636d642d313162050d00004842");
+    let value = ToolCommand {
+        tool_id: "hand-0".into(),
+        command_id: "cmd-11".into(),
+        intent: Some(Intent::PrepareReinforcement(PrepareReinforcementIntent {
+            target_force_n: 50.0,
+        })),
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<ToolCommand>(&want), value);
+}
+
+#[test]
+fn rejected_command_ack_matches_go() {
+    let want = hex("0a05636d642d391a1265786365656473206361706162696c697479");
+    let value = CommandAck {
+        command_id: "cmd-9".into(),
+        accepted: false,
+        reason: "exceeds capability".into(),
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<CommandAck>(&want), value);
+}
+
+#[test]
+fn handshake_hello_matches_go() {
+    let want = hex("0a0668616e642d3012100102030405060708090a0b0c0d0e0f101807");
+    let value = HandshakeHello {
+        tool_id: "hand-0".into(),
+        nonce: (1..=16).collect(),
+        counter: 7,
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<HandshakeHello>(&want), value);
+}
+
+#[test]
+fn handshake_response_matches_go() {
+    // 32-byte public key of 0xaa, then a 64-byte signature of 0xbb.
+    let want = hex(&format!(
+        "0a20{}1240{}1807",
+        "aa".repeat(32),
+        "bb".repeat(64)
+    ));
+    let value = HandshakeResponse {
+        public_key: vec![0xaa; 32],
+        signature: vec![0xbb; 64],
+        counter: 7,
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<HandshakeResponse>(&want), value);
+}
+
+#[test]
+fn relay_state_matches_go() {
+    let want = hex("0801");
+    let value = RelayState {
+        relay_closed: true,
+        reason: String::new(),
+    };
+    assert_eq!(to_hex(&encode(&value)), to_hex(&want));
+    assert_eq!(decode::<RelayState>(&want), value);
+}
