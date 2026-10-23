@@ -91,7 +91,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Transports (`tpt-link`)
 - [x] Transport abstraction trait (`tpt-link::Transport`, datagram semantics; serial needs a stream reassembler)
 - [ ] Serial / USB-CDC transport (host + firmware)
-- [ ] UDP transport (host + sim + firmware where applicable)
+- [x] UDP transport, host side (`tpt-link::UdpTransport`, std only, tested over localhost; firmware side pending)
 - [ ] CAN transport (host via SocketCAN/PCAN adapter + firmware)
   - [ ] Fragmentation/reassembly for messages larger than a CAN frame
   - [ ] CAN-FD support decision
@@ -100,8 +100,8 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Edge firmware (`tpt-hands-edge`)
 - [ ] HAL abstraction layer so logic is shared across MCUs
-- [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up
-- [ ] STM32 target — embassy-stm32 bring-up on STM32G4 (reference family)
+- [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up (`tpt-hands-edge` compiles for `riscv32imc-unknown-none-elf`; the C6 core is `riscv32imac`, so that target still needs installing; bring-up needs hardware)
+- [ ] STM32 target — embassy-stm32 bring-up on STM32G4 (reference family) (`tpt-hands-edge` compiles for `thumbv7em-none-eabihf`; embassy bring-up needs hardware)
 - [ ] 1 kHz reflex loop with timing/jitter measurement
 - [ ] Slip / overload reflexes
 - [ ] Pathway resistance monitoring (ADC drivers, filtering, thresholds)
@@ -228,3 +228,5 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes)
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate
+- [ ] Serial transport crate: the common `serialport` crate is, as I recall, MPL-2.0, which fails the permissive-only policy. Verify with cargo-deny before adopting it, then choose a permissive crate or write the driver in-house.
+- [ ] `tpt-hands-proto::frame` uses `std` (Vec, fmt). Firmware needs a `no_std` decode path before it can share the frame code.

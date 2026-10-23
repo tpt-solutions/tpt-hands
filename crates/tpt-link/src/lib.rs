@@ -12,7 +12,9 @@
 pub mod fault;
 pub mod link;
 pub mod transport;
+pub mod udp;
 
 pub use fault::FaultyTransport;
 pub use link::{Heartbeat, Link, LinkError, LinkStats};
 pub use transport::{Closed, Loopback, Transport};
+pub use udp::UdpTransport;
