@@ -13,7 +13,8 @@ specification and [todo.md](todo.md) for the phased plan.
 | Path | Purpose |
 | --- | --- |
 | `crates/tpt-hands-sdk` | Public Rust SDK: traits, core types, mock drivers |
-| `crates/tpt-hands-proto` | Protobuf wire definitions shared with tpt-link |
+| `crates/tpt-hands-proto` | Protobuf wire definitions and the link frame format |
+| `crates/tpt-link` | Transports, sequenced `Link`, heartbeat, loopback and fault injection |
 | `crates/tpt-hands-edge` | ESP32-C6 and STM32G4 firmware (`no_std`) |
 | `crates/tpt-hands-soma-adapter` | Syncs physiological state to tpt-soma |
 | `crates/tpt-hands-chrysalis-adapter` | Sends morphogenesis requests to tpt-chrysalis |

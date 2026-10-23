@@ -85,18 +85,18 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Add telemetry, command/intent and power-handshake messages
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
 - [ ] Generated code: Rust via micropb-gen (std and `no_std`), Go via protoc-gen-go (BSD-3); no prost
-- [ ] Round-trip and fuzz tests for encode/decode
-- [ ] Frame format: length prefix, CRC, sequence numbers, version byte
+- [ ] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; fuzzing pending)
+- [x] Frame format: length prefix, CRC, sequence numbers, version byte (`tpt-hands-proto::frame`, CRC-32 in-house)
 
 ### Transports (`tpt-link`)
-- [ ] Transport abstraction trait
+- [x] Transport abstraction trait (`tpt-link::Transport`, datagram semantics; serial needs a stream reassembler)
 - [ ] Serial / USB-CDC transport (host + firmware)
 - [ ] UDP transport (host + sim + firmware where applicable)
 - [ ] CAN transport (host via SocketCAN/PCAN adapter + firmware)
   - [ ] Fragmentation/reassembly for messages larger than a CAN frame
   - [ ] CAN-FD support decision
-- [ ] Heartbeat, link-alive detection, reconnect logic
-- [ ] Loopback test harness for each transport
+- [ ] Heartbeat, link-alive detection, reconnect logic (heartbeat monitor and link-alive detection done; reconnect pending)
+- [ ] Loopback test harness for each transport (loopback and fault injection done; per-transport harnesses pending)
 
 ### Edge firmware (`tpt-hands-edge`)
 - [ ] HAL abstraction layer so logic is shared across MCUs

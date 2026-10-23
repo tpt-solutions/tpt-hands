@@ -9,6 +9,7 @@ members = [
     "crates/tpt-hands-edge",
     "crates/tpt-hands-soma-adapter",
     "crates/tpt-hands-chrysalis-adapter",
+    "crates/tpt-link",
 ]
 
 [workspace.package]

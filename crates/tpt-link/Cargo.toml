@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 TPT Solutions
+
+[package]
+name = "tpt-link"
+description = "Transports and link framing for tpt-hands (loopback, fault injection, heartbeat)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+tpt-hands-proto = { path = "../tpt-hands-proto" }
