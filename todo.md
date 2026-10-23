@@ -80,11 +80,11 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 1 — Edge Reflexes & Protocol (Weeks 3–5)
 
 ### Wire protocol (`tpt-hands-proto`)
-- [ ] Reconcile spec Protobuf messages with the real tpt-link schema
-- [ ] Define `PhysiologicalUpdate`, `PathwayHealth`, `MorphogenesisRequest`, `MorphogenesisAck`, `SafetyEnvelope` and action messages
+- [ ] Reconcile spec Protobuf messages with the real tpt-link schema (PROVISIONAL draft at `proto/tpt_hands.proto`, transcribed from DESIGN.md section 6; no real tpt-link `.proto` is available on this machine. Gap found: the request has no id to match the ack, so `request_id` was added as field 2.)
+- [x] Define `PhysiologicalUpdate`, `PathwayHealth`, `MorphogenesisRequest`, `MorphogenesisAck`, `SafetyEnvelope` and action messages (provisional, see the reconcile item above)
 - [ ] Add telemetry, command/intent and power-handshake messages
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
-- [ ] Generated code: Rust via micropb-gen (std and `no_std`), Go via protoc-gen-go (BSD-3); no prost
+- [ ] Generated code: Rust via micropb-gen (std and `no_std`), Go via protoc-gen-go (BSD-3); no prost (blocked: no `protoc` on this machine. Interim: a hand-written codec in `tpt-hands-proto::wire`, byte-identical to Go protobuf output on 7 golden fixtures. Replace with generated code once protoc is available.)
 - [ ] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; fuzzing pending)
 - [x] Frame format: length prefix, CRC, sequence numbers, version byte (`tpt-hands-proto::frame`, CRC-32 in-house)
 
