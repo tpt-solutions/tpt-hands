@@ -59,18 +59,19 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions
 
 ### Core types & traits (`tpt-hands-sdk`)
-- [ ] Define `EndEffector` trait (`capabilities`, `command`, `telemetry`, `physiological_state`)
-- [ ] Define `ToolCapabilities`, `ToolIntent`, `ToolTelemetry`, `ToolIdentity`, `ControlError`
-- [ ] Define `PhysiologicalState`, `PathwayHealth`, `PathwayState`, `HealingProtocolId`, `PathwayId`
-- [ ] Define `MorphogenesisRequest`, `MorphAction`, `SafetyEnvelope`, `FluidType`, `ChannelId`, `TendonId`
-- [ ] Decide telemetry channel type (replace `Receiver` with a runtime-agnostic stream/channel)
-- [ ] Decide sync vs async API and `no_std` split (core types crate usable by firmware)
-- [ ] Unit tests and doc examples for every public type
-- [ ] `SimulatedHand` mock driver
-  - [ ] Healing state machine (Intact → Severed → healing_progress → Intact)
-  - [ ] Growth state machine (ReinforceTendon → recalibration → updated capabilities)
-  - [ ] Hypertrophied pathway state
-  - [ ] Deterministic clock injection for tests
+- [x] Define `EndEffector` trait (`identity`, `capabilities`, `command`, `next_telemetry`, `physiological_state`)
+- [x] Define `ToolCapabilities`, `ToolIntent`, `ToolTelemetry`, `ToolIdentity`, `ControlError`
+- [x] Define `PhysiologicalState`, `PathwayHealth`, `PathwayState`, `HealingProtocolId`, `PathwayId`
+- [x] Define `MorphogenesisRequest`, `MorphAction`, `SafetyEnvelope`, `FluidType`, `ChannelId`, `TendonId`
+- [x] Decide telemetry channel type: pull model, `next_telemetry() -> Option<ToolTelemetry>`, bounded queue (no runtime dependency)
+- [x] Decide sync vs async API: synchronous, so no async runtime is pulled in
+- [ ] Decide `no_std` split (core types crate usable by firmware); SDK still uses `std`
+- [ ] Unit tests and doc examples for every public type (done for the state machine, `ToolIdentity`, `ToolCapabilities`, the clocks and `SimulatedHand`; other types still need examples)
+- [x] `SimulatedHand` mock driver
+  - [x] Healing state machine (Intact → Severed → healing_progress → Intact)
+  - [x] Growth state machine (PrepareForReinforcement → complete_reinforcement → 500 ms recalibration → updated capabilities)
+  - [x] Hypertrophied pathway state
+  - [x] Deterministic clock injection for tests (`ManualClock`)
 - [ ] Write a "new end-effector in < 200 lines" example and measure it
 - [ ] Publish `tpt-hands-sdk` v0.1 (crates.io dry-run, then publish)
 
