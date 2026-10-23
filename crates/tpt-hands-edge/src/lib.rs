@@ -10,6 +10,8 @@
 #![no_std]
 #![forbid(unsafe_code)]
 
+pub mod reflex;
+
 use tpt_hands_proto::frame::{self, Frame, FrameError};
 
 /// Parses one frame received from the host, without copying the payload.

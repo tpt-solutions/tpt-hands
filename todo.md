@@ -103,10 +103,10 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up (`tpt-hands-edge` compiles for `riscv32imc-unknown-none-elf`; the C6 core is `riscv32imac`, so that target still needs installing; bring-up needs hardware)
 - [ ] STM32 target — embassy-stm32 bring-up on STM32G4 (reference family) (`tpt-hands-edge` compiles for `thumbv7em-none-eabihf`; embassy bring-up needs hardware)
 - [ ] 1 kHz reflex loop with timing/jitter measurement
-- [ ] Slip / overload reflexes
-- [ ] Pathway resistance monitoring (ADC drivers, filtering, thresholds)
-- [ ] Fail-soft load redistribution and telemetry rerouting (Pathway A → B)
-- [ ] Pathway state machine on-device (Intact / Severed / Hypertrophied)
+- [x] Slip / overload reflexes (`reflex::GripReflex`, pure logic, tested on host; wired to force sensing on hardware pending)
+- [ ] Pathway resistance monitoring (ADC drivers, filtering, thresholds) (debounced thresholds done in `reflex::PathwayMonitor`; ADC drivers and filtering pending)
+- [x] Fail-soft load redistribution and telemetry rerouting (Pathway A → B) (`reflex::pick_route`)
+- [ ] Pathway state machine on-device (Intact / Severed / Hypertrophied) (Intact and Severed done with debounce and healing; Hypertrophied pending)
 - [ ] Local micro-calibration cycle (500 ms) after morphology change
 - [ ] Watchdog, panic handler, safe-state defaults
 - [ ] Flash/debug tooling docs (probe-rs, espflash)
