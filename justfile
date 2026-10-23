@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 TPT Solutions
+
+# Common developer commands. Install just: https://github.com/casey/just
+
+default: check
+
+# Format check, lint and tests (same as CI)
+check: fmt lint test
+
+fmt:
+    cargo fmt --all -- --check
+
+lint:
+    cargo clippy --workspace --all-targets -- -D warnings
+
+test:
+    cargo test --workspace
+
+doc:
+    cargo doc --workspace --no-deps
+
+# Licence, ban and source policy (needs cargo-deny)
+deny:
+    cargo deny check licenses bans sources

@@ -1,0 +1,9 @@
+# Normalise line endings to LF in the repo
+* text=auto eol=lf
+
+# Binary artefacts
+*.elf binary
+*.bin binary
+*.hex binary
+*.png binary
+*.pdf binary

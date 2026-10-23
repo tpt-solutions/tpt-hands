@@ -3,7 +3,8 @@ Version: 0.2.0 (Ecosystem Integrated)
 Status: Proposal
 Date: 2026-10-12
 Author: TPT
-Stack: Rust (edge + SDK) · Go (orchestration) · Protobuf (wire) · ESP32 (reference edge node)
+Stack: Rust (edge + SDK) · Go (orchestration) · Protobuf (wire) · ESP32-C6 + STM32G4 (reference edge nodes)
+Licence: MIT OR Apache-2.0 (dual), copyright TPT Solutions. See todo.md for the dependency licence policy.
 1. Vision
 tpt-hands is the peripheral nervous system and morphological edge layer for the TPT robotics ecosystem. It is not merely a driver; it is the real-time, hardware-agnostic bridge that connects high-level cognitive intent (tpt-cerebrum), whole-body physiological state tracking (tpt-soma), and formally verified microfluidic actuation (tpt-chrysalis) to physical, self-healing, and morphing end-effectors.
 By leveraging existing TPT infrastructure, tpt-hands enables robotic endpoints to exhibit biological behaviors: local reflexes, graceful degradation, self-healing of torn pathways, and dynamic morphogenesis (growing new data/power conduits or structural tendons on demand).
@@ -16,6 +17,7 @@ Solo-Maintainer Sustainable: Focus purely on protocols, traits, and adapters. Le
 Designing specific mechanical CAD models (out of scope; community/hardware partners build these).
 Replacing tpt-chrysalis’s microfluidic orchestration (we adapt to it, we don't fork it).
 Building general-purpose AI cognition (that is tpt-cerebrum).
+Hardware design of any kind: no CAD models, no reference hardware design. This project is software only.
 2. Core Principles
 #
 Principle
@@ -78,7 +80,7 @@ The single entry point for all manipulation logic.
 pub trait EndEffector: Send + Sync {
     fn capabilities(&self) -> &ToolCapabilities;
     fn command(&mut self, intent: ToolIntent) -> Result<(), ControlError>;
-    fn telemetry(&self) -> Receiver<ToolTelemetry>;
+    fn telemetry(&self) -> Receiver<ToolTelemetry>; // Receiver type TBD: runtime-agnostic stream (todo.md, Phase 0)
     
     /// Returns current physiological state for tpt-soma sync
     fn physiological_state(&self) -> PhysiologicalState;
@@ -131,7 +133,8 @@ Request: tpt-hands sends MorphogenesisRequest::ReinforceTendon to tpt-chrysalis.
 Execution: tpt-chrysalis pumps fast-curing hydrogel into dormant micro-channels within the finger structure, physically thickening the tendon.
 Recalibration: tpt-edge runs a 500ms micro-calibration cycle to map the new physical limits, updates ToolCapabilities, and reports success. The lift proceeds.
 6. Wire Protocol (tpt-link) Extensions
-Additions to the Protobuf schema to support the bio-mimetic stack:
+Additions to the Protobuf schema to support the bio-mimetic stack.
+Codegen: Rust via micropb / micropb-gen (std and no_std); Go via google.golang.org/protobuf. No prost anywhere in the tree (Apache-2.0 only).
 
 message PhysiologicalUpdate {
     string tool_id = 1;
@@ -172,7 +175,7 @@ tpt-hands/
 ├── go/
 │   └── tpt-hands-orchestrator/  ← Go service bridging tpt-swarm and the SDK
 ├── sim/
-│   └── morphogenesis_plugin/ ← MuJoCo/Genesis plugin simulating fluid dynamics & healing
+│   └── morphogenesis_plugin/ ← In-house minimal soft-body model (stiffness, mass, healing timer)
 ├── examples/
 │   ├── sim_healing_loop/     ← End-to-end mock of tear → soma update → chrysalis repair
 │   └── smart_socket_bringup/ ← Power handshake demo
@@ -198,7 +201,7 @@ Implement Ed25519 signed power handshake on tpt-edge.
 Add Kani/TLA+ proofs for power invariants (relay_closed ⇒ data_link_alive).
 CLI simulator for handshake fault injection.
 Phase 4 — Sim2Real Morphogenesis (Weeks 14–16)
-Develop the MuJoCo/Genesis plugin that alters joint stiffness/mass when a MorphogenesisAck is received.
+Develop the in-house simulation model (no MuJoCo/Genesis) that alters joint stiffness/mass when a MorphogenesisAck is received.
 Demo: AI agent in simulation "injures" a finger, waits for the simulated healing timer, and successfully completes the task.
 10. Success Criteria
 tpt-hands is "done" (v1.0) when:
@@ -206,7 +209,14 @@ A developer can implement a new end-effector in < 200 lines of Rust.
 A simulated hand can experience a "torn pathway," automatically notify tpt-soma, trigger a tpt-chrysalis repair job, and recover functionality without human intervention.
 The smart power handshake passes formal verification and a physical fault-injection test (cable yanked → relay opens in < 1 ms).
 The tpt-hands-chrysalis-adapter successfully communicates with the actual tpt-chrysalis repository's API.
-11. Open Questions for Maintainer (You)
-Adapter Coupling: Should tpt-hands depend directly on tpt-chrysalis crates, or communicate purely via gRPC/Protobuf over the network to maintain strict repo isolation? (Recommendation: gRPC/Protobuf for loose coupling and solo-maintainer sanity).
-Simulation Fidelity: Do we build the MuJoCo morphogenesis plugin from scratch, or wrap an existing soft-body physics library?
-Hardware Reference: Do we want to include one minimal, 3D-printable reference design (e.g., a single self-healing finger tip with an ESP32) in the repo to give developers a tangible starting point, or remain 100% software?
+11. Decisions (resolved)
+Adapter Coupling: gRPC/Protobuf only. tpt-hands takes no crate dependency on tpt-soma, tpt-chrysalis or the other ecosystem repos.
+Simulation Fidelity: in-house minimal soft-body model. No MuJoCo, no Genesis, no wrapped physics library.
+Hardware Reference: software only. No CAD, no 3D-printable reference design.
+Go Orchestrator: included in v1.0 as a thin service.
+MCUs: ESP32-C6 and STM32G4 (FDCAN, embassy-stm32) as reference targets. Transports: Serial/USB-CDC, UDP, CAN.
+
+12. Open Items
+CAN vs CAN-FD: classic CAN is the baseline. FD is optional; ESP32-C6 supports classic CAN only.
+no_std core types: whether they live in their own crate.
+Telemetry channel type: runtime-agnostic stream to replace Receiver in EndEffector.

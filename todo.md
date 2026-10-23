@@ -27,17 +27,17 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 0 — Foundation, Licensing & Traits (Weeks 1–2)
 
 ### Repo & legal
-- [ ] Init git repo, `.gitignore`, `.gitattributes`
-- [ ] Add `LICENSE-MIT` and `LICENSE-APACHE` (copyright: TPT Solutions)
-- [ ] Add `SPDX-License-Identifier: MIT OR Apache-2.0` headers / REUSE config
-- [ ] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata
-- [ ] Add README licence section + CONTRIBUTING (contributions dual-licensed by default)
-- [ ] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses)
-- [ ] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates
-- [ ] Move `spec.txt` to `DESIGN.md` (and fix it to match decisions above)
+- [x] Init git repo, `.gitignore`, `.gitattributes`
+- [x] Add `LICENSE-MIT` and `LICENSE-APACHE` (copyright: TPT Solutions)
+- [ ] Add `SPDX-License-Identifier: MIT OR Apache-2.0` headers / REUSE config (headers on all new files done; REUSE config pending)
+- [ ] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata (Cargo done via workspace inheritance; Go module pending)
+- [x] Add README licence section + CONTRIBUTING (contributions dual-licensed by default)
+- [ ] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses) (cargo-about installed; needs deps to generate from)
+- [ ] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates (SECURITY.md and PR template done; CoC and issue templates pending; security contact address to confirm)
+- [x] Move `spec.txt` to `DESIGN.md` (and fix it to match decisions above)
 
 ### Dependency licence policy
-- [ ] Add `deny.toml` (cargo-deny): allow MIT, BSD-2/3, ISC, Zlib, Unicode, `MIT OR Apache-2.0`; deny Apache-2.0-only and copyleft
+- [x] Add `deny.toml` (cargo-deny): allow MIT, BSD-2/3, ISC, Zlib, Unicode, `MIT OR Apache-2.0`; deny Apache-2.0-only and copyleft
 - [ ] Add Go licence check (go-licenses) with same allow list
 - [ ] Re-verify licences of the full transitive tree for tonic + custom codec + micropb (cargo-deny) and protoc/protobuf-go toolchain
 - [ ] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree`
@@ -47,15 +47,15 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc)
 - [ ] Decide whether `tpt-grpc-lite` is a separate repo/module (reusable across TPT repos)
 - [ ] Verify that the existing TPT repos' APIs can be consumed with the chosen stack; if any of them require features we skip (e.g. grpc-web, compression), list them
-- [ ] Wire licence checks into CI as a required gate
+- [ ] Wire licence checks into CI as a required gate (licence job added to `ci.yml`; still needs branch protection to make it required)
 
 ### Workspace & tooling
-- [ ] Create Cargo workspace root with all crates from the spec layout
-- [ ] Pin Rust toolchain (`rust-toolchain.toml`), MSRV policy
-- [ ] rustfmt, clippy (deny warnings), `cargo doc` config
+- [x] Create Cargo workspace root with all crates from the spec layout
+- [x] Pin Rust toolchain (`rust-toolchain.toml`), MSRV policy (pinned 1.97.0; `rust-version = 1.85` in workspace; written policy pending)
+- [x] rustfmt, clippy (deny warnings), `cargo doc` config
 - [ ] Go module setup under `go/tpt-hands-orchestrator`
-- [ ] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows
-- [ ] Pre-commit hooks / justfile / xtask for common commands
+- [ ] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows (Rust jobs on Linux + Windows and the licence job done; Go vet/test pending)
+- [ ] Pre-commit hooks / justfile / xtask for common commands (justfile done; pre-commit hooks pending)
 - [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions
 
 ### Core types & traits (`tpt-hands-sdk`)
