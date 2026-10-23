@@ -11,4 +11,11 @@ license.workspace = true
 authors.workspace = true
 publish.workspace = true
 
+[features]
+default = ["std"]
+# `std` implies `alloc`, and adds the std::error::Error impl.
+std = ["alloc"]
+# Enables the encoder, which needs a heap buffer.
+alloc = []
+
 [dependencies]

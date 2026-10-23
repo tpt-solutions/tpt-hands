@@ -229,4 +229,4 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate
 - [ ] Serial transport crate: the common `serialport` crate is, as I recall, MPL-2.0, which fails the permissive-only policy. Verify with cargo-deny before adopting it, then choose a permissive crate or write the driver in-house.
-- [ ] `tpt-hands-proto::frame` uses `std` (Vec, fmt). Firmware needs a `no_std` decode path before it can share the frame code.
+- [x] `tpt-hands-proto::frame` `no_std` decode path: decoding needs only `core`, and encoding is behind the `alloc` feature. `tpt-hands-edge` uses it and compiles for both MCU targets.

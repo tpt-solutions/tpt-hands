@@ -12,3 +12,5 @@ authors.workspace = true
 publish.workspace = true
 
 [dependencies]
+# Decode-only build, so no heap and no std.
+tpt-hands-proto = { path = "../tpt-hands-proto", default-features = false }

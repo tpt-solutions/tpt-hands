@@ -14,9 +14,12 @@
 //! | crc      | 4 bytes | CRC-32 (IEEE) over everything above     |
 //!
 //! The CRC is written in-house so the crate stays dependency-free and `no_std`
-//! friendly.
+//! friendly. Decoding needs only `core`. Encoding needs the `alloc` feature.
 
-use std::fmt;
+use core::fmt;
+
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
 
 /// Current frame format version.
 pub const VERSION: u8 = 1;
@@ -80,6 +83,7 @@ impl fmt::Display for FrameError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for FrameError {}
 
 /// A decoded frame. The payload borrows from the buffer it was decoded from.
@@ -91,7 +95,7 @@ pub struct Frame<'a> {
     pub payload: &'a [u8],
 }
 
-/// Appends an encoded frame to `out`.
+/// Appends an encoded frame to `out`. Needs the `alloc` feature.
 ///
 /// ```
 /// use tpt_hands_proto::frame::{decode, encode};
@@ -103,6 +107,7 @@ pub struct Frame<'a> {
 /// assert_eq!(frame.payload, b"hello");
 /// assert_eq!(used, wire.len());
 /// ```
+#[cfg(feature = "alloc")]
 pub fn encode(seq: u32, payload: &[u8], out: &mut Vec<u8>) -> Result<(), FrameError> {
     if payload.len() > MAX_PAYLOAD_LEN {
         return Err(FrameError::TooLarge(payload.len()));

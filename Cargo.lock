@@ -9,6 +9,9 @@ version = "0.1.0"
 [[package]]
 name = "tpt-hands-edge"
 version = "0.1.0"
+dependencies = [
+ "tpt-hands-proto",
+]
 
 [[package]]
 name = "tpt-hands-proto"
