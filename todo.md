@@ -90,7 +90,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Transports (`tpt-link`)
 - [x] Transport abstraction trait (`tpt-link::Transport`, datagram semantics; serial needs a stream reassembler)
-- [ ] Serial / USB-CDC transport (host + firmware)
+- [ ] Serial / USB-CDC transport (host + firmware) (host side done: `tpt-link::serial::SerialTransport` behind the `serial` feature, with `Deframer` for byte-stream framing (tested without hardware); a real port round trip and firmware side are pending a bench)
 - [x] UDP transport, host side (`tpt-link::UdpTransport`, std only, tested over localhost; firmware side pending)
 - [ ] CAN transport (host via SocketCAN/PCAN adapter + firmware)
   - [x] Fragmentation/reassembly for messages larger than a CAN frame (`tpt-link::fragment`: split and reassemble, MTU is a parameter, up to 1280 bytes at classic MTU 8)
@@ -228,5 +228,5 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes)
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate
-- [ ] Serial transport crate: the common `serialport` crate is, as I recall, MPL-2.0, which fails the permissive-only policy. Verify with cargo-deny before adopting it, then choose a permissive crate or write the driver in-house.
+- [x] Serial transport crate, decided. `serialport` is MPL-2.0 (checked with `cargo info`), so it is banned. Adopted `serial2` 0.2.38 (BSD-2-Clause OR Apache-2.0), behind the optional `serial` feature of `tpt-link`. Rejected: `tokio-serial` and `mio-serial` (MIT, but pull in an async runtime), `serial-rs` (GPL-2.0-or-later). `cargo deny` passes with all features.
 - [x] `tpt-hands-proto::frame` `no_std` decode path: decoding needs only `core`, and encoding is behind the `alloc` feature. `tpt-hands-edge` uses it and compiles for both MCU targets.

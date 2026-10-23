@@ -12,6 +12,9 @@
 pub mod fault;
 pub mod fragment;
 pub mod link;
+#[cfg(feature = "serial")]
+pub mod serial;
+pub mod stream;
 pub mod transport;
 pub mod udp;
 
