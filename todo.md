@@ -72,7 +72,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
   - [x] Growth state machine (PrepareForReinforcement → complete_reinforcement → 500 ms recalibration → updated capabilities)
   - [x] Hypertrophied pathway state
   - [x] Deterministic clock injection for tests (`ManualClock`)
-- [ ] Write a "new end-effector in < 200 lines" example and measure it
+- [x] Write a "new end-effector in < 200 lines" example and measure it (`crates/tpt-hands-sdk/examples/new_end_effector.rs`: 112 lines)
 - [ ] Publish `tpt-hands-sdk` v0.1 (crates.io dry-run, then publish)
 
 ---
