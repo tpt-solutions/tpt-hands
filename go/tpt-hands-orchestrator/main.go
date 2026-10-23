@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PhillipC05/tpt-hands/go/tpt-hands-orchestrator/internal/version"
+	"github.com/tpt-solutions/tpt-hands/go/tpt-hands-orchestrator/internal/version"
 )
 
 func main() {
