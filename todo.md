@@ -93,8 +93,8 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Serial / USB-CDC transport (host + firmware)
 - [x] UDP transport, host side (`tpt-link::UdpTransport`, std only, tested over localhost; firmware side pending)
 - [ ] CAN transport (host via SocketCAN/PCAN adapter + firmware)
-  - [ ] Fragmentation/reassembly for messages larger than a CAN frame
-  - [ ] CAN-FD support decision
+  - [x] Fragmentation/reassembly for messages larger than a CAN frame (`tpt-link::fragment`: split and reassemble, MTU is a parameter, up to 1280 bytes at classic MTU 8)
+  - [x] CAN-FD support decision: classic CAN is the baseline. The fragment codec takes the MTU, so FD (64) is a configuration change, not a rewrite.
 - [ ] Heartbeat, link-alive detection, reconnect logic (heartbeat monitor and link-alive detection done; reconnect pending)
 - [ ] Loopback test harness for each transport (loopback and fault injection done; per-transport harnesses pending)
 

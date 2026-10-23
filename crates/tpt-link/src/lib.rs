@@ -10,6 +10,7 @@
 #![forbid(unsafe_code)]
 
 pub mod fault;
+pub mod fragment;
 pub mod link;
 pub mod transport;
 pub mod udp;
