@@ -18,3 +18,5 @@
 extern crate alloc;
 
 pub mod frame;
+#[cfg(feature = "alloc")]
+pub mod wire;

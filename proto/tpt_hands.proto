@@ -1,0 +1,83 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Copyright (c) 2026 TPT Solutions
+
+// PROVISIONAL DRAFT. Transcribed from DESIGN.md section 6, plus the gaps noted
+// below. It must be reconciled with the real tpt-link schema before it is
+// relied on across repos. See todo.md, Phase 1.
+
+syntax = "proto3";
+
+package tpt.hands.v1;
+
+// Health of one pathway, as the edge reports it.
+message PathwayHealth {
+  uint32 id = 1;
+  PathwayState state = 2;
+  float healing_progress = 3;  // meaningful only when state is SEVERED
+  float resistance_ohms = 4;
+  float max_bandwidth_mbps = 5;
+}
+
+enum PathwayState {
+  PATHWAY_STATE_INTACT = 0;
+  PATHWAY_STATE_SEVERED = 1;
+  PATHWAY_STATE_HYPERTROPHIED = 2;
+}
+
+// Physiological state, streamed to tpt-soma.
+message PhysiologicalUpdate {
+  string tool_id = 1;
+  float structural_integrity = 2;
+  repeated PathwayHealth pathways = 3;
+  uint64 timestamp_us = 4;
+}
+
+message HealPathwayAction {
+  uint32 pathway_id = 1;
+  bool heat_assist = 2;
+}
+
+message SproutConduitAction {
+  uint32 origin = 1;
+  uint32 destination = 2;
+  FluidType fluid_type = 3;
+}
+
+message ReinforceTendonAction {
+  uint32 tendon_id = 1;
+  float volume_ml = 2;
+}
+
+enum FluidType {
+  FLUID_TYPE_UNSPECIFIED = 0;  // proto3 needs a zero value; not a valid fluid
+  FLUID_TYPE_SELF_HEALING_ELASTOMER = 1;
+  FLUID_TYPE_LIQUID_METAL = 2;
+  FLUID_TYPE_HYDROGEL = 3;
+}
+
+message SafetyEnvelope {
+  float max_pressure_kpa = 1;
+  float max_temperature_c = 2;
+  float max_volume_ml = 3;
+}
+
+// Request from tpt-hands to tpt-chrysalis. It never actuates pumps directly.
+message MorphogenesisRequest {
+  string tool_id = 1;
+  // GAP: DESIGN.md has no request id, but MorphogenesisAck refers to one.
+  // Added here so the ack can be matched to its request.
+  string request_id = 2;
+  oneof action {
+    HealPathwayAction heal = 10;
+    SproutConduitAction sprout = 11;
+    ReinforceTendonAction reinforce = 12;
+  }
+  SafetyEnvelope safety_limits = 99;
+}
+
+// Reply from tpt-chrysalis.
+message MorphogenesisAck {
+  string request_id = 1;
+  bool approved = 2;
+  string chrysalis_job_id = 3;  // tracked by tpt-chrysalis
+}
