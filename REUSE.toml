@@ -1,0 +1,22 @@
+version = 1
+
+# Files that cannot carry an SPDX comment header. Everything else carries its
+# own header, checked by `reuse lint`.
+[[annotations]]
+path = [
+    ".gitattributes",
+    ".gitignore",
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/ISSUE_TEMPLATE/feature_request.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "Cargo.lock",
+    "DESIGN.md",
+    "README.md",
+    "SECURITY.md",
+    "rust-toolchain.toml",
+    "todo.md",
+]
+SPDX-FileCopyrightText = "2026 TPT Solutions"
+SPDX-License-Identifier = "MIT OR Apache-2.0"

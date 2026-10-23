@@ -29,11 +29,11 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Repo & legal
 - [x] Init git repo, `.gitignore`, `.gitattributes`
 - [x] Add `LICENSE-MIT` and `LICENSE-APACHE` (copyright: TPT Solutions)
-- [ ] Add `SPDX-License-Identifier: MIT OR Apache-2.0` headers / REUSE config (headers on all new files done; REUSE config pending)
-- [ ] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata (Cargo done via workspace inheritance; Go module pending)
+- [x] Add per-file SPDX licence headers / REUSE config (`REUSE.toml` plus `LICENSES/`; `reuse lint` passes)
+- [x] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata (Cargo via workspace inheritance; Go modules have no licence field, so the SPDX header is the equivalent)
 - [x] Add README licence section + CONTRIBUTING (contributions dual-licensed by default)
 - [ ] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses) (cargo-about installed; needs deps to generate from)
-- [ ] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates (SECURITY.md and PR template done; CoC and issue templates pending; security contact address to confirm)
+- [x] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates (the CoC and SECURITY.md contact address still need confirming)
 - [x] Move `spec.txt` to `DESIGN.md` (and fix it to match decisions above)
 
 ### Dependency licence policy
@@ -53,9 +53,9 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Create Cargo workspace root with all crates from the spec layout
 - [x] Pin Rust toolchain (`rust-toolchain.toml`), MSRV policy (pinned 1.97.0; `rust-version = 1.85` in workspace; written policy pending)
 - [x] rustfmt, clippy (deny warnings), `cargo doc` config
-- [ ] Go module setup under `go/tpt-hands-orchestrator`
-- [ ] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows (Rust jobs on Linux + Windows and the licence job done; Go vet/test pending)
-- [ ] Pre-commit hooks / justfile / xtask for common commands (justfile done; pre-commit hooks pending)
+- [x] Go module setup under `go/tpt-hands-orchestrator` (module path `github.com/PhillipC05/tpt-hands/...` is a placeholder until the real repo location is confirmed)
+- [x] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows (licence and REUSE jobs included)
+- [x] Pre-commit hooks / justfile / xtask for common commands (`justfile` and `.pre-commit-config.yaml`)
 - [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions
 
 ### Core types & traits (`tpt-hands-sdk`)
