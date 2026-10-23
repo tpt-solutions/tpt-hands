@@ -95,7 +95,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] CAN transport (host via SocketCAN/PCAN adapter + firmware)
   - [x] Fragmentation/reassembly for messages larger than a CAN frame (`tpt-link::fragment`: split and reassemble, MTU is a parameter, up to 1280 bytes at classic MTU 8)
   - [x] CAN-FD support decision: classic CAN is the baseline. The fragment codec takes the MTU, so FD (64) is a configuration change, not a rewrite.
-- [ ] Heartbeat, link-alive detection, reconnect logic (heartbeat monitor and link-alive detection done; reconnect pending)
+- [x] Heartbeat, link-alive detection, reconnect logic (`Heartbeat`, plus `reconnect::Reconnector` with exponential backoff: first try immediate, then 100 ms doubling to a 5 s cap in the recommended defaults. Wiring into the orchestrator is pending.)
 - [ ] Loopback test harness for each transport (loopback and fault injection done; per-transport harnesses pending)
 
 ### Edge firmware (`tpt-hands-edge`)

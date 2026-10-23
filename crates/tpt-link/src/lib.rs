@@ -12,6 +12,7 @@
 pub mod fault;
 pub mod fragment;
 pub mod link;
+pub mod reconnect;
 #[cfg(feature = "serial")]
 pub mod serial;
 pub mod stream;
