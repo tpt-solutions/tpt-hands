@@ -42,10 +42,10 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Re-verify licences of the full transitive tree for tonic + custom codec + micropb (cargo-deny) and protoc/protobuf-go toolchain
 - [ ] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree`
 - [ ] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document
-- [ ] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata
-- [ ] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (or explicitly scope out)
-- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc)
-- [ ] Decide whether `tpt-grpc-lite` is a separate repo/module (reusable across TPT repos)
+- [x] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata (`go/tpt-grpc-lite`; tests and benchmarks pass, see its README)
+- [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive is an option only, not tested against a dead peer)
+- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Go-to-Go tests exist; the other sides are pending.
+- [x] Decide whether `tpt-grpc-lite` is a separate repo/module (reusable across TPT repos): separate Go module in this repo, at `go/tpt-grpc-lite`
 - [ ] Verify that the existing TPT repos' APIs can be consumed with the chosen stack; if any of them require features we skip (e.g. grpc-web, compression), list them
 - [ ] Wire licence checks into CI as a required gate (licence job added to `ci.yml`; still needs branch protection to make it required)
 
@@ -85,7 +85,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Add telemetry, command/intent and power-handshake messages (PROVISIONAL, drafted from the spec wording. Handshake shapes only: the security design is Phase 3. Gap: `command_id` added to `ToolCommand` so commands can be acked. 8 golden fixtures from Go protobuf.)
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
 - [x] Generated code: Rust via micropb-gen 0.5.1 (MIT OR Apache-2.0), no prost. `tools/proto-gen` regenerates `crates/tpt-hands-proto/src/generated/` (protoc 29.3). CI fails if the committed code is stale. Verified against 9 golden fixtures from Go protobuf.
-- [ ] Generated code for Go (protoc-gen-go, BSD-3) — not started; the Go orchestrator needs it
+- [x] Generated code for Go (protoc-gen-go, BSD-3) in `go/tpt-hands-orchestrator/internal/gen/tpthandsv1` (`just proto-go`; round-trip tests pass. Generated with protoc 35.1; the Rust side uses 29.3.)
 - [ ] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; fuzzing pending)
 - [x] Frame format: length prefix, CRC, sequence numbers, version byte (`tpt-hands-proto::frame`, CRC-32 in-house)
 
@@ -107,7 +107,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Slip / overload reflexes (`reflex::GripReflex`, pure logic, tested on host; wired to force sensing on hardware pending)
 - [ ] Pathway resistance monitoring (ADC drivers, filtering, thresholds) (debounced thresholds done in `reflex::PathwayMonitor`; ADC drivers and filtering pending)
 - [x] Fail-soft load redistribution and telemetry rerouting (Pathway A → B) (`reflex::pick_route`)
-- [ ] Pathway state machine on-device (Intact / Severed / Hypertrophied) (Intact and Severed done with debounce and healing; Hypertrophied pending)
+- [x] Pathway state machine on-device (Intact / Severed / Hypertrophied) (debounced tear and healing; `PathwayMonitor::reinforce` marks a usable pathway Hypertrophied on host command, and it is still watched for tears)
 - [ ] Local micro-calibration cycle (500 ms) after morphology change
 - [ ] Watchdog, panic handler, safe-state defaults
 - [ ] Flash/debug tooling docs (probe-rs, espflash)
@@ -135,7 +135,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Go orchestrator (`go/tpt-hands-orchestrator`)
 - [ ] Read tpt-swarm API; define bridge contract
 - [ ] Thin service: swarm ↔ SDK, device registry, routing by `tool_id`
-- [ ] Health/metrics endpoint, structured logging, config
+- [ ] Health/metrics endpoint, structured logging, config (done: `/healthz` and `/version`, JSON `slog`, env config with startup validation, graceful shutdown. Metrics endpoint pending.)
 - [ ] Cerebrum-facing intent path (capability queries, prepare-for-reinforcement)
 - [ ] Integration tests against mocks
 - [ ] Dockerfile / run instructions
@@ -160,7 +160,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Relay driver with hardware-enforced default-open
 - [ ] Link-loss detection → relay open in < 1 ms
 - [ ] Host-side handshake implementation in SDK (the state machine is in `crates/tpt-hands-handshake`; wiring into the SDK and to the relay driver is pending)
-- [ ] Threat model document
+- [ ] Threat model document (draft in `docs/THREAT_MODEL.md`; not yet reviewed)
 
 ### Formal verification
 - [ ] Kani proofs: `relay_closed ⇒ data_link_alive`
@@ -194,7 +194,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Demo
 - [x] Agent "injures" a finger, waits for healing timer, completes the task (scripted test in the model; a demo recording is not made)
-- [ ] Scripted baseline agent (no dependency on tpt-cerebrum) plus optional cerebrum-driven run (the scripted sequence is in the test; a standalone agent is not written)
+- [x] Scripted baseline agent (no dependency on tpt-cerebrum): `morphogenesis_plugin::baseline::run_scripted`, with `examples/baseline_agent.rs`. The cerebrum-driven run is not done.
 - [ ] Record demo and write walkthrough
 
 ---
@@ -202,7 +202,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 5 — Release Hardening to v1.0
 
 ### Docs
-- [ ] `docs/ADDING_A_TOOL.md`
+- [x] `docs/ADDING_A_TOOL.md`
 - [ ] API docs complete and published
 - [ ] Architecture overview, wire protocol reference, power handshake spec
 - [ ] Firmware porting guide (adding another MCU)
@@ -212,7 +212,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Test coverage review; add missing tests
 - [ ] Fuzz targets for frame parsing and handshake messages
 - [ ] Soak test: long-running link with fault injection
-- [ ] Performance benchmarks: reflex loop latency, link throughput
+- [x] Performance benchmarks: reflex loop latency, link throughput (host-only, on loopback: `cargo bench -p tpt-hands-edge --bench reflex_tick`, `cargo bench -p tpt-hands-proto --bench link_throughput`, plus `go test -bench` in `go/tpt-grpc-lite`. MCU and real-link numbers still need hardware.)
 - [ ] Final licence audit (all crates + Go modules + vendored protos) and `THIRD_PARTY_LICENSES`
 - [ ] Semver and release process, CHANGELOG
 - [ ] Publish all crates; tag v1.0
