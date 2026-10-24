@@ -43,8 +43,8 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree`
 - [ ] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document
 - [x] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata (`go/tpt-grpc-lite`; tests and benchmarks pass, see its README)
-- [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive is an option only, not tested against a dead peer)
-- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Go-to-Go tests exist; the other sides are pending.
+- [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive tested against a frozen TCP peer, which fails the test when removed)
+- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Both directions pass against grpc-core (Python `grpc`), an independent implementation. Rust tonic and the real tpt-soma / tpt-chrysalis / tpt-swarm servers are still pending.
 - [x] Decide whether `tpt-grpc-lite` is a separate repo/module (reusable across TPT repos): separate Go module in this repo, at `go/tpt-grpc-lite`
 - [ ] Verify that the existing TPT repos' APIs can be consumed with the chosen stack; if any of them require features we skip (e.g. grpc-web, compression), list them
 - [ ] Wire licence checks into CI as a required gate (licence job added to `ci.yml`; still needs branch protection to make it required)
