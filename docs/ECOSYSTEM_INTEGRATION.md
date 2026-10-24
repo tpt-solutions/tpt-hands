@@ -23,13 +23,17 @@ or equivalent, any device-telemetry ingest, and any "physiological state" type.
   for tpt-hands telemetry. It needs an `ingest` token for resource class
   `device_state`, and `read` tokens are refused. Batches are validated in full,
   and rows go to `device_state_observations` (migration `000009`). The database
-  test needs `TEST_DATABASE_URL`, and it has not been run here. Reads and writes
-  are still not audit-logged.
+  test needs `TEST_DATABASE_URL`, and it has not been run here. Every write is
+  audit-logged (`567b104`): accepted batches are logged before their rows are
+  written, and the write fails if the log cannot be written. Reads are still
+  not audit-logged.
 - **tpt-chrysalis `014a7ab`.** `POST /api/v1/device-commands` accepts
   `heal_pathway`, `sprout_conduit` and `reinforce_tendon`. Every kind is refused
   with 422 until it has a gate rule and a HAL mapping. Nothing reaches the
-  orchestrator. The gate's default-allow for unmatched steps is still there, and
-  so is the refusal gap in the audit ledger.
+  orchestrator. Each refusal is recorded in the audit ledger as
+  `PhysicalAction::DeviceCommand` with outcome `Rejected` (`58a4dc6`). The
+  gate's default-allow for unmatched steps is unchanged, and that is for the
+  chrysalis owners to decide.
 - Sections 1-3 below describe the APIs as they were before these commits.
 
 ## 1. What the real APIs are
