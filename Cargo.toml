@@ -10,6 +10,7 @@ members = [
     "crates/tpt-hands-soma-adapter",
     "crates/tpt-hands-chrysalis-adapter",
     "tools/proto-gen",
+    "crates/tpt-hands-handshake",
 ]
 
 # tpt-link is its own repo on GitHub. Pinned to the v0.2.0 release commit. The

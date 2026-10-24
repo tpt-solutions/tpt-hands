@@ -153,13 +153,13 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Handshake implementation
 - [ ] Design handshake protocol spec (data pins mate first → challenge/response → relay close)
-- [ ] Choose Ed25519 library that passes licence policy and runs `no_std` (e.g. ed25519-dalek BSD-3)
+- [x] Choose Ed25519 library that passes licence policy and runs `no_std` (ed25519-dalek 3.0.0, BSD-3-Clause; the `no_std` build is not checked yet)
 - [ ] Key provisioning, storage, rotation and revocation design
-- [ ] Replay protection (nonces/timestamps/counters)
+- [x] Replay protection (`tpt-hands-handshake`: counter strictly increases per device; a refused handshake does not advance it)
 - [ ] Implement handshake state machine on tpt-edge (ESP32 + STM32)
 - [ ] Relay driver with hardware-enforced default-open
 - [ ] Link-loss detection → relay open in < 1 ms
-- [ ] Host-side handshake implementation in SDK
+- [ ] Host-side handshake implementation in SDK (the state machine is in `crates/tpt-hands-handshake`; wiring into the SDK and to the relay driver is pending)
 - [ ] Threat model document
 
 ### Formal verification
