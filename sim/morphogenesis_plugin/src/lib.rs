@@ -81,6 +81,7 @@ fn check_non_negative(name: &'static str, value: f64) -> Result<f64, ModelError>
     }
 }
 
+pub mod baseline;
 mod hand;
 pub use hand::SimHand;
 
