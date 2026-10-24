@@ -119,14 +119,14 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 2 — Ecosystem Adapters (Weeks 6–9)
 
 ### Soma adapter (`tpt-hands-soma-adapter`)
-- [ ] Read real tpt-soma API/proto; document mapping from `PhysiologicalState`
+- [x] Read real tpt-soma API/proto; document mapping from `PhysiologicalState` (done: `docs/ECOSYSTEM_INTEGRATION.md`. Finding: tpt-soma is a patient-data platform. Its Flight `do_put` and `do_action` are unimplemented, so there is no ingest path for device telemetry.)
 - [ ] Implement gRPC client streaming `PhysiologicalUpdate`
 - [ ] Reconnect, backpressure and buffering behaviour
 - [ ] Mock tpt-soma server for tests
 - [ ] Receive repair directives from soma where the API supports it
 
 ### Chrysalis adapter (`tpt-hands-chrysalis-adapter`)
-- [ ] Read real tpt-chrysalis API/proto; document mapping from `MorphogenesisRequest`
+- [x] Read real tpt-chrysalis API/proto; document mapping from `MorphogenesisRequest` (done: `docs/ECOSYSTEM_INTEGRATION.md`. Finding: chrysalis has no heal, conduit or tendon actions. Its vocabulary is Dispense, SetValve and SetTemperature, and its API is a Phase 1 dev surface. The mapping is by analogy only.)
 - [ ] Implement gRPC client for submitting requests and receiving `MorphogenesisAck`
 - [ ] Track `chrysalis_job_id` lifecycle (submitted, approved, running, done, failed)
 - [ ] Safety envelope serialization and rejection handling
