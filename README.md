@@ -5,8 +5,15 @@ ecosystem. tpt-hands is the hardware-agnostic bridge between high-level intent
 (tpt-cerebrum), physiological state (tpt-soma) and microfluidic actuation
 (tpt-chrysalis), and the physical end-effectors it drives.
 
-Status: early development (Phase 0). See [DESIGN.md](DESIGN.md) for the
-specification and [todo.md](todo.md) for the phased plan.
+Status: in development. Phases 0 to 2 are done, except where [todo.md](todo.md)
+notes pending work. Those cover the SDK traits and `SimulatedHand` mock, the
+link frame format and transports (via tpt-link), the on-device reflexes, and
+the soma and chrysalis adapters. Smart power and formal proofs (Phase 3),
+sim2real morphogenesis (Phase 4) and release hardening (Phase 5) are still to
+do. See [DESIGN.md](DESIGN.md) for the specification,
+[todo.md](todo.md) for the phased plan and
+[docs/ECOSYSTEM_INTEGRATION.md](docs/ECOSYSTEM_INTEGRATION.md) for how the
+adapters map onto the real tpt-soma and tpt-chrysalis APIs.
 
 ## Layout
 
@@ -19,8 +26,10 @@ specification and [todo.md](todo.md) for the phased plan.
 | `crates/tpt-hands-soma-adapter` | Syncs physiological state to tpt-soma |
 | `crates/tpt-hands-chrysalis-adapter` | Sends morphogenesis requests to tpt-chrysalis |
 
-Planned: `go/tpt-hands-orchestrator` (Go service bridging tpt-swarm) and
-`sim/morphogenesis_plugin` (in-house soft-body model).
+Also in the tree: `go/tpt-hands-orchestrator` (Go service bridging tpt-swarm,
+thin for now), `proto/tpt_hands.proto` (the wire schema) and `tools/proto-gen`
+(regenerates the committed protobuf code). Planned: `sim/morphogenesis_plugin`
+(in-house soft-body model).
 
 ## Development
 
