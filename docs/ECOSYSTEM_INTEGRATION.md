@@ -17,6 +17,21 @@ Sources read (public, TPT-Solutions on GitHub):
 Not found in either repo: a gRPC service definition, any `MorphogenesisRequest`
 or equivalent, any device-telemetry ingest, and any "physiological state" type.
 
+## 0. Status after the 2026-10-25 changes (local master, not pushed)
+
+- **tpt-soma `00004e3`.** Flight `do_put` now accepts the `device_state` subject
+  for tpt-hands telemetry. It needs an `ingest` token for resource class
+  `device_state`, and `read` tokens are refused. Batches are validated in full,
+  and rows go to `device_state_observations` (migration `000009`). The database
+  test needs `TEST_DATABASE_URL`, and it has not been run here. Reads and writes
+  are still not audit-logged.
+- **tpt-chrysalis `014a7ab`.** `POST /api/v1/device-commands` accepts
+  `heal_pathway`, `sprout_conduit` and `reinforce_tendon`. Every kind is refused
+  with 422 until it has a gate rule and a HAL mapping. Nothing reaches the
+  orchestrator. The gate's default-allow for unmatched steps is still there, and
+  so is the refusal gap in the audit ledger.
+- Sections 1-3 below describe the APIs as they were before these commits.
+
 ## 1. What the real APIs are
 
 ### tpt-soma: a patient-data platform
