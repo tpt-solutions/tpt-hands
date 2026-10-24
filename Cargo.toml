@@ -12,10 +12,11 @@ members = [
     "tools/proto-gen",
 ]
 
-# tpt-link lives in its own repo (C:\Programming\tpt-link, path relative to this
-# workspace root). Until it is hosted, this repo needs that sibling checkout.
+# tpt-link is its own repo on GitHub. Pinned to the v0.2.0 release commit. The
+# tag itself is not pushed yet, so the commit is pinned instead. Builds need no
+# sibling checkout.
 [workspace.dependencies]
-tpt-link = { version = "0.1.0", path = "../tpt-link", default-features = false }
+tpt-link = { version = "0.2.0", git = "https://github.com/tpt-solutions/tpt-link", rev = "8e23498550578581b7d717a725f2571bbd15f8c5", default-features = false }
 
 [workspace.package]
 version = "0.1.0"

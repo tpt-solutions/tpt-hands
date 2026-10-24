@@ -107,18 +107,18 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "micropb"
-version = "0.5.1"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb212b4e6e311e2ed61c0cc28dcfe97461fbf98ad0b84e958392cffba94e4b8e"
+checksum = "e1bfc6ec8daaec9373b02386de3f58b46c578122c48324bbee23bef86afd5240"
 dependencies = [
  "num-traits",
 ]
 
 [[package]]
 name = "micropb-gen"
-version = "0.5.1"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f12eb6651dc2aaf9b3fcb5168d36bb0e34f84137a87719db4be1fb74dceed65"
+checksum = "1a3523f12fb45cd353092dafdce2e0c5e05b9e05bee804b5fe228d332ff3c96d"
 dependencies = [
  "convert_case",
  "micropb",
@@ -372,7 +372,8 @@ version = "0.1.0"
 
 [[package]]
 name = "tpt-link"
-version = "0.1.0"
+version = "0.2.0"
+source = "git+https://github.com/tpt-solutions/tpt-link?rev=8e23498550578581b7d717a725f2571bbd15f8c5#8e23498550578581b7d717a725f2571bbd15f8c5"
 
 [[package]]
 name = "unicode-ident"
