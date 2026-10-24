@@ -17,6 +17,9 @@
 pub enum PathwayStatus {
     /// Working normally.
     Intact,
+    /// Reinforced by a host command (tendon thickening). Still usable, and
+    /// still watched for tears.
+    Hypertrophied,
     /// Torn. Telemetry is rerouted away from it.
     Severed,
 }
@@ -76,13 +79,31 @@ impl PathwayMonitor {
         self.status
     }
 
+    /// Marks a usable pathway as reinforced, on the host's command after a
+    /// `reinforce` morphogenesis ack. A severed pathway is not changed, because
+    /// it must heal first.
+    ///
+    /// ```
+    /// use tpt_hands_edge::reflex::{PathwayMonitor, PathwayStatus};
+    ///
+    /// let mut m = PathwayMonitor::new(100.0, 50.0, 1);
+    /// m.reinforce();
+    /// assert_eq!(m.status(), PathwayStatus::Hypertrophied);
+    /// ```
+    pub fn reinforce(&mut self) {
+        if self.status == PathwayStatus::Intact {
+            self.status = PathwayStatus::Hypertrophied;
+            self.streak = 0;
+        }
+    }
+
     /// Feeds one resistance sample and returns any change it caused.
     ///
     /// A NaN or infinite reading counts as a tear. Failing safe is better than
     /// assuming the pathway is fine.
     pub fn sample(&mut self, ohms: f32) -> PathwayEvent {
         match self.status {
-            PathwayStatus::Intact => {
+            PathwayStatus::Intact | PathwayStatus::Hypertrophied => {
                 if !ohms.is_finite() || ohms >= self.sever_ohms {
                     self.streak = self.streak.saturating_add(1);
                     if self.streak >= self.debounce {
@@ -126,9 +147,12 @@ impl PathwayMonitor {
 /// ```
 pub fn pick_route(monitors: &[PathwayMonitor], preference: &[usize]) -> Option<usize> {
     preference.iter().copied().find(|&i| {
-        monitors
-            .get(i)
-            .is_some_and(|m| m.status() == PathwayStatus::Intact)
+        monitors.get(i).is_some_and(|m| {
+            matches!(
+                m.status(),
+                PathwayStatus::Intact | PathwayStatus::Hypertrophied
+            )
+        })
     })
 }
 
@@ -235,6 +259,36 @@ mod tests {
         }
         assert_eq!(last, PathwayEvent::Healed);
         assert_eq!(m.status(), PathwayStatus::Intact);
+    }
+
+    #[test]
+    fn reinforced_pathway_is_still_watched_for_tears() {
+        let mut m = PathwayMonitor::new(100.0, 50.0, 2);
+        m.reinforce();
+        assert_eq!(m.status(), PathwayStatus::Hypertrophied);
+
+        assert_eq!(m.sample(500.0), PathwayEvent::None);
+        assert_eq!(m.sample(500.0), PathwayEvent::Severed);
+        assert_eq!(m.status(), PathwayStatus::Severed);
+    }
+
+    #[test]
+    fn reinforce_does_not_change_a_severed_pathway() {
+        let mut m = PathwayMonitor::new(100.0, 50.0, 1);
+        m.sample(500.0);
+        m.reinforce();
+        assert_eq!(m.status(), PathwayStatus::Severed);
+    }
+
+    #[test]
+    fn reinforced_pathway_still_routes_and_heals_to_intact() {
+        let mut monitors = [PathwayMonitor::new(100.0, 50.0, 1); 2];
+        monitors[0].reinforce();
+        assert_eq!(pick_route(&monitors, &[0, 1]), Some(0));
+
+        monitors[0].sample(500.0);
+        monitors[0].sample(10.0);
+        assert_eq!(monitors[0].status(), PathwayStatus::Intact);
     }
 
     #[test]
