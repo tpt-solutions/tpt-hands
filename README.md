@@ -14,7 +14,7 @@ specification and [todo.md](todo.md) for the phased plan.
 | --- | --- |
 | `crates/tpt-hands-sdk` | Public Rust SDK: traits, core types, mock drivers |
 | `crates/tpt-hands-proto` | Protobuf wire definitions and the link frame format |
-| `../tpt-link` (separate repo) | Shared wire layer: frame format, transports, `Link`, heartbeat, reconnect. See its `spec.txt`. |
+| [tpt-link](https://github.com/tpt-solutions/tpt-link) (separate repo, dependency) | Shared wire layer: frame format, transports, `Link`, heartbeat, reconnect, CAN and core schema. |
 | `crates/tpt-hands-edge` | ESP32-C6 and STM32G4 firmware (`no_std`) |
 | `crates/tpt-hands-soma-adapter` | Syncs physiological state to tpt-soma |
 | `crates/tpt-hands-chrysalis-adapter` | Sends morphogenesis requests to tpt-chrysalis |

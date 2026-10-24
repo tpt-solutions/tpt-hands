@@ -225,7 +225,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ---
 
-- [x] **tpt-link recreated** as its own repo at `C:\Programming\tpt-link` (local, not pushed), with `spec.txt`. The frame codec moved in, so tpt-link is the base layer and tpt-hands depends on it. The earlier 'not found' note is resolved. The schema draft is still provisional until the real tpt-link schema is reconciled (see tpt-link `spec.txt`, open item 1).
+- [x] **tpt-link is real and in use.** It lives at github.com/tpt-solutions/tpt-link (also cloned at C:\Programming	pt-link). tpt-hands depends on it at commit 8e23498 (v0.2.0 release; the tag is not pushed yet). Schema reconciled against proto/tpt_link.proto (package tpt.link.v1): no clashes. Open: request_id and command_id are candidates for the core (tpt-link spec section 13), a decision for the core maintainer.
 
 - [ ] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes)
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
