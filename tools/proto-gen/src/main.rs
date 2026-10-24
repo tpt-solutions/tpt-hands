@@ -24,8 +24,10 @@ fn main() -> io::Result<()> {
     // generator writes. CI compares against a fresh run.
     generator.format(true);
     generator.add_protoc_arg(format!("-I{}", proto_dir.display()));
-    generator.compile_protos(
-        &[proto_dir.join("tpt_hands.proto")],
-        out_dir.join("tpt_hands.rs"),
-    )
+    generator
+        .compile_protos(
+            &[proto_dir.join("tpt_hands.proto")],
+            out_dir.join("tpt_hands.rs"),
+        )
+        .map_err(|e| io::Error::other(e.to_string()))
 }

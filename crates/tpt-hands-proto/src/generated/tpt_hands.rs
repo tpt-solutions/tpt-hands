@@ -540,7 +540,7 @@ pub mod tpt_ {
                         }
                     }
                     {
-                        for val_ref in self.r#pathways.iter() {
+                        for (i, val_ref) in self.r#pathways.iter().enumerate() {
                             encoder.encode_varint32(26u32)?;
                             val_ref.encode_len_delimited(encoder)?;
                         }
@@ -572,7 +572,7 @@ pub mod tpt_ {
                         }
                     }
                     {
-                        for val_ref in self.r#pathways.iter() {
+                        for (i, val_ref) in self.r#pathways.iter().enumerate() {
                             size
                                 += 1usize
                                     + ::micropb::size::sizeof_len_record(

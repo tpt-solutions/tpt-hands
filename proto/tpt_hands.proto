@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 // Copyright (c) 2026 TPT Solutions
 
-// PROVISIONAL DRAFT. Transcribed from DESIGN.md section 6, plus the gaps noted
-// below. It must be reconciled with the real tpt-link schema before it is
-// relied on across repos. See todo.md, Phase 1.
+// Reconciled against tpt-link v0.2.0, proto/tpt_link.proto (package tpt.link.v1):
+// no name clashes. This file uses none of the core messages (Heartbeat, Ack,
+// Error), so it does not import that file.
+//
+// Still provisional at the message level. Two fields are candidates for the
+// shared core, per tpt-link spec section 13: request_id on MorphogenesisRequest
+// and command_id on ToolCommand. Moving them is the core maintainer's decision.
+// Messages marked PROVISIONAL below have not been reviewed against the design.
 
 syntax = "proto3";
 

@@ -22,4 +22,4 @@ alloc = ["dep:micropb", "micropb/alloc"]
 # Frame format, from the tpt-link repo.
 tpt-link.workspace = true
 # Runtime for the code generated from proto/. MIT OR Apache-2.0.
-micropb = { version = "0.5.1", default-features = false, features = ["encode", "decode", "enable-64bit"], optional = true }
+micropb = { version = "0.6", default-features = false, features = ["encode", "decode", "enable-64bit"], optional = true }
