@@ -23,3 +23,14 @@ alloc = ["dep:micropb", "micropb/alloc"]
 tpt-link.workspace = true
 # Runtime for the code generated from proto/. MIT OR Apache-2.0.
 micropb = { version = "0.6", default-features = false, features = ["encode", "decode", "enable-64bit"], optional = true }
+
+# Timing harness with no extra dependencies. Run with
+# `cargo bench -p tpt-hands-proto`.
+[[bench]]
+name = "link_throughput"
+harness = false
+
+# The benchmark needs the UDP transport, which the workspace pin leaves out.
+# Dev-only, so the library keeps the no-default-features build.
+[dev-dependencies]
+tpt-link = { workspace = true, features = ["std"] }

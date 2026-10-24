@@ -14,3 +14,9 @@ publish.workspace = true
 [dependencies]
 # Decode-only build, so no heap and no std.
 tpt-hands-proto = { version = "0.1.0", path = "../tpt-hands-proto", default-features = false }
+
+# Timing harness with no extra dependencies, so the bench builds the same on
+# every host. Run with `cargo bench -p tpt-hands-edge`.
+[[bench]]
+name = "reflex_tick"
+harness = false
