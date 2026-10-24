@@ -11,6 +11,7 @@ members = [
     "crates/tpt-hands-chrysalis-adapter",
     "tools/proto-gen",
     "crates/tpt-hands-handshake",
+    "sim/morphogenesis_plugin",
 ]
 
 # tpt-link is its own repo on GitHub. Pinned to the v0.2.0 release commit. The

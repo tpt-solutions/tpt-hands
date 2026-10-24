@@ -181,20 +181,20 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 4 — Sim2Real Morphogenesis (Weeks 14–16)
 
 ### In-house simulation model (`sim/morphogenesis_plugin`)
-- [ ] Define scope of the soft-body/stiffness/mass model (what fidelity is "enough")
-- [ ] Choose implementation language and licence-clean dependencies (math/linear algebra)
-- [ ] Hand/finger model with joints, stiffness, mass
-- [ ] Apply `MorphogenesisAck` effects: stiffness/mass change on heal, tendon thickening on reinforce
-- [ ] Healing timer driven by simulated time
-- [ ] Injury injection API (tear a pathway)
-- [ ] Simple grasp/lift task environment
-- [ ] Integrate with `SimulatedHand` and the SDK over protobuf
-- [ ] Validation against analytic/simple test cases
+- [x] Define scope of the soft-body/stiffness/mass model (what fidelity is "enough"): one joint, penalty contact, semi-implicit Euler. Stated in `sim/morphogenesis_plugin/src/lib.rs`.
+- [x] Choose implementation language and licence-clean dependencies (math/linear algebra): Rust, no physics dependencies, only the SDK path dependency.
+- [x] Hand/finger model with joints, stiffness, mass (single finger joint done; the full hand is not modelled yet)
+- [x] Apply `MorphogenesisAck` effects: tendon thickening raises stiffness (`reinforce`), healing restores integrity. Mass change on heal is not modelled.
+- [x] Healing timer driven by simulated time
+- [x] Injury injection API (tear a pathway): `Finger::injure`
+- [x] Simple grasp task environment (`run_grasp`). Lift is not modelled yet; the grasp holds a contact force for a set time.
+- [x] Integrate with `SimulatedHand` and the SDK (`SimHand` implements `EndEffector`). Over protobuf: not done.
+- [x] Validation against analytic/simple test cases (free equilibrium, grasp equilibrium, reinforcement, release)
 - [ ] Optional visualisation (licence-checked)
 
 ### Demo
-- [ ] Agent "injures" a finger, waits for healing timer, completes the task
-- [ ] Scripted baseline agent (no dependency on tpt-cerebrum) plus optional cerebrum-driven run
+- [x] Agent "injures" a finger, waits for healing timer, completes the task (scripted test in the model; a demo recording is not made)
+- [ ] Scripted baseline agent (no dependency on tpt-cerebrum) plus optional cerebrum-driven run (the scripted sequence is in the test; a standalone agent is not written)
 - [ ] Record demo and write walkthrough
 
 ---

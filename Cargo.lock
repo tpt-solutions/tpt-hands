@@ -523,6 +523,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "tpt-hands-morphogenesis-sim"
+version = "0.1.0"
+dependencies = [
+ "tpt-hands-sdk",
+]
+
+[[package]]
 name = "tpt-hands-proto"
 version = "0.1.0"
 dependencies = [
