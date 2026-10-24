@@ -56,7 +56,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Go module setup under `go/tpt-hands-orchestrator` (module path `github.com/tpt-solutions/tpt-hands/...`, matching origin)
 - [x] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows (licence and REUSE jobs included)
 - [x] Pre-commit hooks / justfile / xtask for common commands (`justfile` and `.pre-commit-config.yaml`)
-- [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions
+- [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions (tpt-link: recreated locally, schema still to import; the others are public under TPT-Solutions)
 
 ### Core types & traits (`tpt-hands-sdk`)
 - [x] Define `EndEffector` trait (`identity`, `capabilities`, `command`, `next_telemetry`, `physiological_state`)
@@ -225,8 +225,8 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ---
 
-- [ ] **tpt-link repo not found.** Not on this machine, not in the public TPT-Solutions org (checked via the GitHub API), and not referenced by tpt-soma, tpt-chrysalis, tpt-cerebrum or tpt-swarm (full-text search of shallow clones). It may be private or under another owner. Needed: the repo, or its .proto, to reconcile `proto/tpt_hands.proto`.
-## Open items to revisit
+- [x] **tpt-link recreated** as its own repo at `C:\Programming\tpt-link` (local, not pushed), with `spec.txt`. The frame codec moved in, so tpt-link is the base layer and tpt-hands depends on it. The earlier 'not found' note is resolved. The schema draft is still provisional until the real tpt-link schema is reconciled (see tpt-link `spec.txt`, open item 1).
+
 - [ ] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes)
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate

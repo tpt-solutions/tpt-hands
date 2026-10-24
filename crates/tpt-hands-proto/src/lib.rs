@@ -16,6 +16,7 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
-pub mod frame;
+// The frame format is owned by tpt-link. Re-exported so existing paths keep working.
+pub use tpt_link::frame;
 #[cfg(feature = "alloc")]
 pub mod generated;

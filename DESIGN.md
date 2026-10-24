@@ -169,7 +169,7 @@ tpt-hands/
 ├── crates/
 │   ├── tpt-hands-sdk/        ← Public Rust SDK (traits, mocks, drivers)
 │   ├── tpt-hands-proto/      ← Protobuf definitions and link frame format
-│   ├── tpt-link/             ← Transports, sequenced Link, heartbeat (added in Phase 1)
+│   (tpt-link lives in its own repo, ../tpt-link: transports, Link, heartbeat)
 │   ├── tpt-hands-edge/       ← ESP32/STM32 firmware (esp-rs / embassy)
 │   ├── tpt-hands-soma-adapter/  ← Syncs PhysiologicalState to tpt-soma
 │   └── tpt-hands-chrysalis-adapter/ ← Sends MorphogenesisRequests to tpt-chrysalis

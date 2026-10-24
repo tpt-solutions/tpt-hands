@@ -270,17 +270,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serial2"
-version = "0.2.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b16809bc35793b19ce4e0c53924bc0dce3937f15487997cfdaed936004180730"
-dependencies = [
- "cfg-if",
- "libc",
- "windows-sys",
-]
-
-[[package]]
 name = "syn"
 version = "2.0.119"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -370,6 +359,7 @@ name = "tpt-hands-proto"
 version = "0.1.0"
 dependencies = [
  "micropb",
+ "tpt-link",
 ]
 
 [[package]]
@@ -383,10 +373,6 @@ version = "0.1.0"
 [[package]]
 name = "tpt-link"
 version = "0.1.0"
-dependencies = [
- "serial2",
- "tpt-hands-proto",
-]
 
 [[package]]
 name = "unicode-ident"

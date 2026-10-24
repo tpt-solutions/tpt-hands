@@ -9,9 +9,13 @@ members = [
     "crates/tpt-hands-edge",
     "crates/tpt-hands-soma-adapter",
     "crates/tpt-hands-chrysalis-adapter",
-    "crates/tpt-link",
     "tools/proto-gen",
 ]
+
+# tpt-link lives in its own repo (C:\Programming\tpt-link, path relative to this
+# workspace root). Until it is hosted, this repo needs that sibling checkout.
+[workspace.dependencies]
+tpt-link = { version = "0.1.0", path = "../tpt-link", default-features = false }
 
 [workspace.package]
 version = "0.1.0"
