@@ -29,21 +29,33 @@ repos and split out later without a history rewrite.
 - Message size limits on send and receive (default 4 MiB)
 - Reconnect: a new connection is dialled on the next call after a drop. Tested
   across a server restart.
-- Keepalive pings (`WithKeepalive`). The option is set, but I have not tested
-  it against a dead peer.
+- Keepalive pings (`WithKeepalive`). A test freezes a TCP proxy, so the peer
+  goes silent without closing, and checks that the call fails well before its
+  30 s deadline. The test fails when keepalive is removed.
 
 ## What is out
 
 Compression, retries, interceptors, reflection, health checking, load balancing,
 and name resolution. These are not planned for v1.
 
+## Interop
+
+`interop_test.go` checks both directions against grpc-core, the C
+implementation behind Python's `grpc` package, and skips when Python with
+`grpcio` is missing. Scripts are in `interop/`. Covered: unary, error status
+with a non-ASCII message, unknown method, metadata including `-bin`, deadlines,
+and all three streaming shapes.
+
 ## Not yet verified
 
-- **Interop with the Rust tonic stack and the real tpt-soma, tpt-chrysalis and
-  tpt-swarm servers.** Tests here are Go-to-Go only. Interop is a todo.md Phase 0
-  item.
-- **Race detector.** Not run: this machine has no C compiler, which `-race`
-  needs. Run `go test -race ./...` on CI or a machine with gcc.
+- **Rust tonic and the real tpt-soma, tpt-chrysalis and tpt-swarm servers.** Not
+  tested. tonic needs a prost-free codec spike first, and the real servers need
+  their protos and a live endpoint.
+- **Race detector.** `go test -race` does not run on this Windows machine. The
+  clang-based toolchain from PyPI (`ziglang`) builds the package, but the
+  ThreadSanitizer runtime fails at startup with DLL-not-found (0xc0000135), even
+  with a generated `synchronization` import library and a static link. Run it
+  on CI or a machine with a native gcc or MSVC toolchain.
 
 ## Running
 
