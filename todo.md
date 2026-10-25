@@ -103,7 +103,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Edge firmware (`tpt-hands-edge`)
 - [ ] HAL abstraction layer so logic is shared across MCUs
 - [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up (`tpt-hands-edge` compiles for `riscv32imc-unknown-none-elf`; the C6 core is `riscv32imac`, so that target now builds too (installed); bring-up needs hardware)
-  - [~] ESP32-P4 bring-up (`firmware/esp32p4-bringup`, standalone): the firmware builds and flashes to the board over COM7 (`espflash flash --chip esp32p4 --port COM7 --no-stub --baud 115200`). It does NOT run yet: the chip resets in a loop (LP watchdog) right after the ROM hands off to the bootloader, before app code. Next step: check the bootloader and esp-hal/P4 chip-revision setup.
+  - [~] ESP32-P4 bring-up (`firmware/esp32p4-bringup`, standalone): the firmware builds and flashes to the board over COM7 (`espflash flash --chip esp32p4 --port COM7 --no-stub --baud 115200`). It does NOT run yet: the chip resets in a loop (LP watchdog) right after the ROM hands off to the bootloader, before app code. Tried: setting ESP_HAL_CONFIG_MIN_CHIP_REVISION=103 to match the v1.3 chip. It made no difference, so the loop is inside the bootloader, not the app's init assert. Next: the bootloader image that espflash writes for P4 (eco2 ROM, v1.3 silicon).
 - [ ] STM32 target — embassy-stm32 bring-up on STM32G4 (reference family) (`tpt-hands-edge` compiles for `thumbv7em-none-eabihf`; embassy bring-up needs hardware)
 - [ ] 1 kHz reflex loop with timing/jitter measurement
 - [x] Slip / overload reflexes (`reflex::GripReflex`, pure logic, tested on host; wired to force sensing on hardware pending)
