@@ -21,6 +21,10 @@
 #[cfg(feature = "http")]
 pub mod transport;
 
+/// MOCK of the proposed interface, for tests. Not the real tpt-chrysalis.
+#[cfg(feature = "mock")]
+pub mod mock;
+
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};

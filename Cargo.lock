@@ -792,6 +792,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tpt-hands-integration"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "tpt-hands-chrysalis-adapter",
+ "tpt-hands-edge",
+ "tpt-hands-sdk",
+]
+
+[[package]]
 name = "tpt-hands-morphogenesis-sim"
 version = "0.1.0"
 dependencies = [
