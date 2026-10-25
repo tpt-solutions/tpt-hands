@@ -1,5 +1,9 @@
 # Rust
 /target/
+**/target/
+# cargo-fuzz output: generated inputs and crash artifacts
+**/fuzz/corpus/
+**/fuzz/artifacts/
 **/*.rs.bk
 Cargo.lock.bak
 

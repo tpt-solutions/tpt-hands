@@ -32,3 +32,7 @@ proto:
 proto-go:
     mkdir -p go/tpt-hands-orchestrator/internal/gen/tpthandsv1
     protoc -Iproto --go_out=go/tpt-hands-orchestrator/internal/gen/tpthandsv1 --go_opt=paths=source_relative --go_opt='Mtpt_hands.proto=github.com/tpt-solutions/tpt-hands/go/tpt-hands-orchestrator/internal/gen/tpthandsv1;tpthandsv1' proto/tpt_hands.proto
+
+# Regenerate the third-party licence notice for the Rust workspace.
+third-party:
+    cargo about generate about.hbs -o THIRD_PARTY_LICENSES.md
