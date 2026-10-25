@@ -32,15 +32,16 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Add per-file SPDX licence headers / REUSE config (`REUSE.toml` plus `LICENSES/`; `reuse lint` passes)
 - [x] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata (Cargo via workspace inheritance; Go modules have no licence field, so the SPDX header is the equivalent)
 - [x] Add README licence section + CONTRIBUTING (contributions dual-licensed by default)
-- [ ] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses) (cargo-about installed; needs deps to generate from)
+- [~] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses). Rust done: `THIRD_PARTY_LICENSES.md` from `about.toml` and `about.hbs`, regenerate with `just third-party`. Go (go-licenses) still pending.
 - [x] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates (the CoC and SECURITY.md contact address still need confirming)
 - [x] Move `spec.txt` to `DESIGN.md` (and fix it to match decisions above)
 
 ### Dependency licence policy
 - [x] Add `deny.toml` (cargo-deny): allow MIT, BSD-2/3, ISC, Zlib, Unicode, `MIT OR Apache-2.0`; deny Apache-2.0-only and copyleft
 - [ ] Add Go licence check (go-licenses) with same allow list
-- [ ] Re-verify licences of the full transitive tree for tonic + custom codec + micropb (cargo-deny) and protoc/protobuf-go toolchain
-- [ ] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree`
+- [ ] Re-verify licences of the full transitive tree for tonic + custom codec + micropb (cargo-deny) and protoc/protobuf-go toolchain. Result: the root workspace passes. tonic 0.14 fails, because it depends on `sync_wrapper` (Apache-2.0 only). See the decision below.
+- [x] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree` (`tools/grpc-spike`, standalone. Unary round trip passes, no prost in the tree, and it interops with `tpt-grpc-lite` in both directions. It is outside the root workspace because of the sync_wrapper finding.)
+  - DECISION NEEDED (recommendation: keep the policy; do not waive sync_wrapper). Rust host stack: tonic is out, because it cannot meet the Apache-only ban. Recommended instead: a small Rust gRPC layer on hyper + micropb, mirroring `tpt-grpc-lite`. The spike's `serve` and the hyper glue are the start of it. Alternative: request a policy waiver for `sync_wrapper`, which is a tiny, well-known Apache-2.0 crate.
 - [ ] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document
 - [x] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata (`go/tpt-grpc-lite`; tests and benchmarks pass, see its README)
 - [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive tested against a frozen TCP peer, which fails the test when removed)
@@ -86,7 +87,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Define versioning/compat rules and a `buf`-style breaking-change check
 - [x] Generated code: Rust via micropb-gen 0.5.1 (MIT OR Apache-2.0), no prost. `tools/proto-gen` regenerates `crates/tpt-hands-proto/src/generated/` (protoc 29.3). CI fails if the committed code is stale. Verified against 9 golden fixtures from Go protobuf.
 - [x] Generated code for Go (protoc-gen-go, BSD-3) in `go/tpt-hands-orchestrator/internal/gen/tpthandsv1` (`just proto-go`; round-trip tests pass. Generated with protoc 35.1; the Rust side uses 29.3.)
-- [ ] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; fuzzing pending)
+- [~] Round-trip and fuzz tests for encode/decode (round-trip and exhaustive bit-flip tests done; cargo-fuzz targets run locally, 4.0M frame inputs and 120k handshake inputs, no crashes; CI runs the stable smoke tests, not libFuzzer)
 - [x] Frame format: length prefix, CRC, sequence numbers, version byte (`tpt-hands-proto::frame`, CRC-32 in-house)
 
 ### Transports (`tpt-link`)
@@ -210,7 +211,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Quality
 - [ ] Test coverage review; add missing tests
-- [ ] Fuzz targets for frame parsing and handshake messages
+- [x] Fuzz targets for frame parsing and handshake messages (`crates/tpt-hands-proto/fuzz/frame_decode`, `crates/tpt-hands-handshake/fuzz/forged_response`; the forged-response target checks that random responses never close the relay. Needs nightly and the MSVC ASan DLL on PATH on this machine.)
 - [ ] Soak test: long-running link with fault injection
 - [x] Performance benchmarks: reflex loop latency, link throughput (host-only, on loopback: `cargo bench -p tpt-hands-edge --bench reflex_tick`, `cargo bench -p tpt-hands-proto --bench link_throughput`, plus `go test -bench` in `go/tpt-grpc-lite`. MCU and real-link numbers still need hardware.)
 - [ ] Final licence audit (all crates + Go modules + vendored protos) and `THIRD_PARTY_LICENSES`
@@ -227,7 +228,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 - [x] **tpt-link is real and in use.** It lives at github.com/tpt-solutions/tpt-link (also cloned at C:\Programming	pt-link). tpt-hands depends on it at commit 8e23498 (v0.2.0 release; the tag is not pushed yet). Schema reconciled against proto/tpt_link.proto (package tpt.link.v1): no clashes. Open: request_id and command_id are candidates for the core (tpt-link spec section 13), a decision for the core maintainer.
 
-- [ ] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes)
+- [~] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes). Answered: the protobuf side passes. tonic does not (sync_wrapper). Decision above.
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate
 - [x] Serial transport crate, decided. `serialport` is MPL-2.0 (checked with `cargo info`), so it is banned. Adopted `serial2` 0.2.38 (BSD-2-Clause OR Apache-2.0), behind the optional `serial` feature of `tpt-link`. Rejected: `tokio-serial` and `mio-serial` (MIT, but pull in an async runtime), `serial-rs` (GPL-2.0-or-later). `cargo deny` passes with all features.
