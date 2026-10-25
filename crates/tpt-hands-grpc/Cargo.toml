@@ -12,7 +12,7 @@ authors.workspace = true
 publish.workspace = true
 
 [dependencies]
-tpt-hands-proto = { path = "../tpt-hands-proto" }
+tpt-hands-proto = { version = "0.1.0", path = "../tpt-hands-proto" }
 micropb = { version = "0.6", default-features = false, features = ["encode", "decode", "enable-64bit", "alloc"] }
 bytes = "1"
 futures-util = { version = "0.3", default-features = false }
