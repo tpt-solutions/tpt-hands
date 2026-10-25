@@ -128,10 +128,10 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Chrysalis adapter (`tpt-hands-chrysalis-adapter`)
 - [x] Read real tpt-chrysalis API/proto; document mapping from `MorphogenesisRequest` (done: `docs/ECOSYSTEM_INTEGRATION.md`. Finding: chrysalis has no heal, conduit or tendon actions. Its vocabulary is Dispense, SetValve and SetTemperature, and its API is a Phase 1 dev surface. The mapping is by analogy only.)
-- [ ] Implement gRPC client for submitting requests and receiving `MorphogenesisAck`
-- [ ] Track `chrysalis_job_id` lifecycle (submitted, approved, running, done, failed)
-- [ ] Safety envelope serialization and rejection handling
-- [ ] Mock tpt-chrysalis server for tests
+- [x] Implement the client for submitting requests and receiving `MorphogenesisAck` (over HTTP/1.1, not gRPC: chrysalis is a REST service. `transport::ChrysalisClient` posts to `/api/v1/device-commands` with a bearer token, times out, and returns an ack. Built against the proposed interface, so it is not yet proven against the real service.)
+- [~] Track `chrysalis_job_id` lifecycle (submitted, approved, running, done, failed). The state machine is done (`advance`, with tests). It is not yet wired to the transport or the orchestrator.
+- [x] Safety envelope serialization and rejection handling (limits go out as named parameters, non-finite values are refused by name, and a 422 becomes a refused ack with its reason)
+- [x] Mock tpt-chrysalis server for tests (labelled as a MOCK of the proposed device-command interface, not the real service, which has no such endpoint yet; see `tests/transport.rs`)
 
 ### Go orchestrator (`go/tpt-hands-orchestrator`)
 - [ ] Read tpt-swarm API; define bridge contract
