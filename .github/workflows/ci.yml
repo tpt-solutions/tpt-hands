@@ -72,6 +72,29 @@ jobs:
       - name: Test
         run: go test ./...
 
+  go-grpc-lite:
+    name: Go tpt-grpc-lite (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: go/tpt-grpc-lite
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/tpt-grpc-lite/go.mod
+      - name: Format
+        shell: bash
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./...
+
   licence:
     name: Licence and dependency policy
     runs-on: ubuntu-latest
@@ -84,3 +107,12 @@ jobs:
         run: |
           pip install reuse
           reuse lint
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/tpt-grpc-lite/go.mod
+      - name: Go licences (tpt-grpc-lite)
+        working-directory: go/tpt-grpc-lite
+        run: go run github.com/google/go-licenses@v1.6.0 check ./... --allowed_licenses=MIT,BSD-2-Clause,BSD-3-Clause,ISC,Zlib,Unicode-3.0 --ignore github.com/tpt-solutions
+      - name: Go licences (orchestrator)
+        working-directory: go/tpt-hands-orchestrator
+        run: go run github.com/google/go-licenses@v1.6.0 check ./... --allowed_licenses=MIT,BSD-2-Clause,BSD-3-Clause,ISC,Zlib,Unicode-3.0 --ignore github.com/tpt-solutions
