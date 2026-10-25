@@ -212,7 +212,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Quality
 - [ ] Test coverage review; add missing tests
 - [x] Fuzz targets for frame parsing and handshake messages (`crates/tpt-hands-proto/fuzz/frame_decode`, `crates/tpt-hands-handshake/fuzz/forged_response`; the forged-response target checks that random responses never close the relay. Needs nightly and the MSVC ASan DLL on PATH on this machine.)
-- [ ] Soak test: long-running link with fault injection
+- [x] Soak test: long-running link with fault injection (in-process: 20k messages over Loopback with bursts of drops and corruption; checks no damaged frame is delivered, CRC failures match corruption, and sequence gaps match every missing frame. Runs in `cargo test`. A hardware soak is still to do.)
 - [x] Performance benchmarks: reflex loop latency, link throughput (host-only, on loopback: `cargo bench -p tpt-hands-edge --bench reflex_tick`, `cargo bench -p tpt-hands-proto --bench link_throughput`, plus `go test -bench` in `go/tpt-grpc-lite`. MCU and real-link numbers still need hardware.)
 - [ ] Final licence audit (all crates + Go modules + vendored protos) and `THIRD_PARTY_LICENSES`
 - [ ] Semver and release process, CHANGELOG
