@@ -11,6 +11,7 @@
 #![forbid(unsafe_code)]
 
 pub mod reflex;
+pub mod safety;
 
 use tpt_hands_proto::frame::{self, Frame, FrameError};
 
