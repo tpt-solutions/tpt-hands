@@ -7,9 +7,10 @@
 //! and micropb, not tonic: tonic depends on `sync_wrapper`, which is Apache-2.0
 //! only, and the licence policy bans that.
 //!
-//! Scope: unary calls, status trailers, deadlines (`grpc-timeout`), message
-//! size limits, and cleartext HTTP/2. Not yet: streaming, metadata, TLS,
-//! compression, and interceptors.
+//! Scope: unary calls, buffered multi-message calls with request metadata, status
+//! trailers, deadlines (`grpc-timeout`), message size limits, and cleartext
+//! HTTP/2. Not yet: true streaming, response metadata, TLS, compression, and
+//! interceptors.
 
 pub mod ack;
 
@@ -512,6 +513,161 @@ impl Client {
     }
 }
 
+/// Splits a body into its gRPC frames. Strict: a truncated frame, a compressed
+/// frame, one message over `max_each`, or a body over `max_total` is an error.
+/// An empty body is zero messages.
+pub fn decode_frames(buf: &[u8], max_each: usize, max_total: usize) -> Result<Vec<&[u8]>, Status> {
+    if buf.len() > max_total {
+        return Err(Status::new(Code::ResourceExhausted, "response too large"));
+    }
+    let mut out = Vec::new();
+    let mut rest = buf;
+    while !rest.is_empty() {
+        if rest.len() < FRAME_HEADER_LEN {
+            return Err(Status::new(Code::Internal, "truncated frame header"));
+        }
+        if rest[0] != 0 {
+            return Err(Status::new(
+                Code::Unimplemented,
+                "compressed messages are not supported",
+            ));
+        }
+        let n = u32::from_be_bytes([rest[1], rest[2], rest[3], rest[4]]) as usize;
+        if n > max_each {
+            return Err(Status::new(Code::ResourceExhausted, "message too large"));
+        }
+        let end = FRAME_HEADER_LEN + n;
+        if rest.len() < end {
+            return Err(Status::new(Code::Internal, "truncated frame"));
+        }
+        out.push(&rest[FRAME_HEADER_LEN..end]);
+        rest = &rest[end..];
+    }
+    Ok(out)
+}
+
+/// Checks outgoing request metadata before anything is sent. Keys must be
+/// lowercase ASCII and unique. Reserved keys are refused: `te`, `content-type`,
+/// `grpc-*` and binary (`-bin`) keys. Values must be visible ASCII or space,
+/// which excludes CR and LF.
+pub fn validate_metadata(pairs: &[(&str, &str)]) -> Result<(), Status> {
+    let mut seen = std::collections::HashSet::new();
+    for (key, value) in pairs {
+        let key_ok = !key.is_empty()
+            && key.bytes().all(|b| {
+                b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'-' | b'_' | b'.')
+            });
+        if !key_ok {
+            return Err(Status::new(
+                Code::InvalidArgument,
+                format!("invalid metadata key `{key}`"),
+            ));
+        }
+        if key.starts_with("grpc-")
+            || key.ends_with("-bin")
+            || matches!(*key, "te" | "content-type")
+        {
+            return Err(Status::new(
+                Code::InvalidArgument,
+                format!("reserved metadata key `{key}`"),
+            ));
+        }
+        if !seen.insert(*key) {
+            return Err(Status::new(
+                Code::InvalidArgument,
+                format!("duplicate metadata key `{key}`"),
+            ));
+        }
+        if !value.bytes().all(|b| (0x20..=0x7e).contains(&b)) {
+            return Err(Status::new(
+                Code::InvalidArgument,
+                format!("metadata `{key}` must be visible ASCII"),
+            ));
+        }
+    }
+    Ok(())
+}
+
+impl Client {
+    /// Sends every request message in one body, then reads every response message.
+    ///
+    /// This is not bidirectional streaming. Nothing is interleaved, and there is no
+    /// backpressure, so the whole request is held in memory. Metadata is validated
+    /// before anything is sent. `max_recv` caps each response message and the whole
+    /// response body.
+    pub async fn call_buffered(
+        &self,
+        path: &str,
+        metadata: &[(&str, &str)],
+        requests: &[Vec<u8>],
+        timeout: Option<Duration>,
+    ) -> Result<Vec<Vec<u8>>, Status> {
+        validate_metadata(metadata)?;
+        let mut body = BytesMut::new();
+        for r in requests {
+            body.put_slice(&encode_frame(r));
+        }
+
+        let mut builder = Request::post(format!("http://{}{}", self.authority, path))
+            .header(CONTENT_TYPE, GRPC_CONTENT_TYPE)
+            .header("te", "trailers");
+        for (key, value) in metadata {
+            builder = builder.header(*key, *value);
+        }
+        if let Some(d) = timeout {
+            builder = builder.header(GRPC_TIMEOUT, encode_timeout(d));
+        }
+        let request = builder
+            .body(Full::new(body.freeze()))
+            .map_err(|e| Status::new(Code::InvalidArgument, format!("build request: {e}")))?;
+
+        let call = async {
+            let resp = self
+                .http
+                .request(request)
+                .await
+                .map_err(|e| Status::new(Code::Unavailable, format!("transport: {e}")))?;
+            let (parts, body) = resp.into_parts();
+            // A status in the headers ends the call, before any body is read.
+            if let Some(status) = status_from(&parts.headers) {
+                if status.code != Code::Ok {
+                    return Err(status);
+                }
+            }
+            let collected = Limited::new(body, self.max_recv)
+                .collect()
+                .await
+                .map_err(|e| {
+                    if e.downcast_ref::<http_body_util::LengthLimitError>()
+                        .is_some()
+                    {
+                        Status::new(Code::ResourceExhausted, "response too large")
+                    } else {
+                        Status::new(Code::Unavailable, "failed to read response")
+                    }
+                })?;
+            // Errors arrive in the trailers, possibly after zero messages. Check
+            // them before parsing any frame.
+            let trailers = collected.trailers().cloned().unwrap_or_default();
+            if let Some(status) = status_from(&trailers) {
+                if status.code != Code::Ok {
+                    return Err(status);
+                }
+            }
+            let data = collected.to_bytes();
+            let frames = decode_frames(&data, self.max_recv, self.max_recv)?;
+            Ok(frames.into_iter().map(<[u8]>::to_vec).collect())
+        };
+
+        match timeout {
+            Some(d) => tokio::time::timeout(d, call)
+                .await
+                .unwrap_or_else(|_| Err(Status::new(Code::DeadlineExceeded, "deadline exceeded"))),
+            None => call.await,
+        }
+    }
+}
+
 /// Reads grpc-status and grpc-message from a header or trailer map. `None` if
 /// the map has no grpc-status.
 fn status_from(map: &HeaderMap) -> Option<Status> {
@@ -569,6 +725,66 @@ mod tests {
         assert_eq!(encode_timeout(Duration::from_millis(100)), "100000u");
         assert!(parse_timeout("12X").is_none());
         assert!(parse_timeout("123456789m").is_none());
+    }
+
+    #[test]
+    fn decode_frames_reads_many_messages() {
+        let mut buf = encode_frame(b"a").to_vec();
+        buf.extend_from_slice(&encode_frame(b"bb"));
+        let frames = decode_frames(&buf, 10, 100).unwrap();
+        assert_eq!(frames, vec![&b"a"[..], &b"bb"[..]]);
+        assert!(decode_frames(&[], 10, 100).unwrap().is_empty());
+    }
+
+    #[test]
+    fn decode_frames_is_strict() {
+        assert_eq!(
+            decode_frames(&[0, 0, 0, 0, 3, b'a'], 10, 100)
+                .unwrap_err()
+                .code,
+            Code::Internal
+        );
+        assert_eq!(
+            decode_frames(&[0, 0], 10, 100).unwrap_err().code,
+            Code::Internal
+        );
+        assert_eq!(
+            decode_frames(&[1, 0, 0, 0, 0], 10, 100).unwrap_err().code,
+            Code::Unimplemented
+        );
+        assert_eq!(
+            decode_frames(&[0, 0, 0, 0, 20], 10, 100).unwrap_err().code,
+            Code::ResourceExhausted
+        );
+        let big = encode_frame(&[0u8; 20]);
+        assert_eq!(
+            decode_frames(&big, 100, 10).unwrap_err().code,
+            Code::ResourceExhausted
+        );
+    }
+
+    #[test]
+    fn metadata_rules() {
+        assert!(validate_metadata(&[("authorization", "Bearer abc"), ("x-trace", "1")]).is_ok());
+        let bad: Vec<Vec<(&str, &str)>> = vec![
+            vec![("te", "x")],
+            vec![("content-type", "x")],
+            vec![("grpc-timeout", "1S")],
+            vec![("x-data-bin", "AA==")],
+            vec![(":path", "/")],
+            vec![("X-Upper", "1")],
+            vec![("", "1")],
+            vec![("x-a", "1"), ("x-a", "2")],
+            vec![("x-a", "line\nbreak")],
+            vec![("x-a", "tab\there")],
+        ];
+        for case in bad {
+            assert_eq!(
+                validate_metadata(&case).unwrap_err().code,
+                Code::InvalidArgument,
+                "{case:?}"
+            );
+        }
     }
 
     #[test]

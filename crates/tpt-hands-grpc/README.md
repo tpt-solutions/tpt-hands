@@ -19,11 +19,25 @@ Built on hyper and micropb. tonic is not used: tonic 0.14 depends on
   without being buffered in full
 - Cleartext HTTP/2 (h2c-style, prior knowledge)
 
+## Buffered calls and request metadata
+
+`Client::call_buffered` sends several request messages in one body, then reads
+several response messages. It is not bidirectional streaming: nothing is
+interleaved and there is no backpressure, so the whole request is held in memory.
+Request metadata is validated before anything is sent. Keys must be lowercase
+ASCII and unique. `te`, `content-type`, `grpc-*` and `-bin` keys are refused, and
+values must be visible ASCII.
+
+Errors can arrive in the headers (a trailers-only status) or in the trailers
+after zero or more messages. `call_buffered` checks both before it parses any
+frame, and a partial result is discarded when an error follows.
+
 ## Not yet
 
 - Streaming (server, client and bidi)
-- Metadata
-- TLS and mTLS
+- Server-side metadata and response metadata
+- TLS and mTLS. The bearer token therefore travels in cleartext: use loopback or
+  a trusted network.
 - Compression and interceptors
 
 ## Interop
