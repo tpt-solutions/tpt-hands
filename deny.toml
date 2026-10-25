@@ -37,6 +37,10 @@ deny = [
     { crate = "prost-types" },
     { crate = "tonic-prost" },
     { crate = "tonic-prost-build" },
+    # tonic 0.14 depends on sync_wrapper (Apache-2.0 only). The Rust gRPC layer is
+    # tpt-hands-grpc (hyper + micropb). Banning these fails CI if they come back.
+    { crate = "tonic" },
+    { crate = "sync_wrapper" },
 ]
 
 [sources]
@@ -44,4 +48,9 @@ unknown-registry = "deny"
 unknown-git = "deny"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
 # tpt-link is our own repo, pinned to a commit in Cargo.toml. Nothing else may be a git source.
-allow-git = ["https://github.com/tpt-solutions/tpt-link"]
+# Pinned to a commit: tpt-link (0.2.0) and tpt-soma-flight (the in-house Flight
+# encoding, no tonic with default features off). Nothing else may be a git source.
+allow-git = [
+    "https://github.com/tpt-solutions/tpt-link",
+    "https://github.com/tpt-solutions/tpt-soma",
+]

@@ -34,6 +34,18 @@ or equivalent, any device-telemetry ingest, and any "physiological state" type.
   `PhysicalAction::DeviceCommand` with outcome `Rejected` (`58a4dc6`). The
   gate's default-allow for unmatched steps is unchanged, and that is for the
   chrysalis owners to decide.
+- **tpt-soma `72551ec`.** `tpt-soma-flight` has `tonic` behind a default-on `service`
+  feature. With default features off it has no tonic, so it can be used without a
+  gRPC stack. This is the Arrow-free encoding that tpt-hands depends on.
+- **tpt-hands `tpt-hands-soma-adapter` (2026-10-26).** `SomaClient::put` sends
+  device-state snapshots to soma's `DoPut` as a buffered gRPC call. It uses
+  `tpt-soma-flight` for the encoding and has no arrow crate. Each snapshot is validated
+  against soma's rules before any call is made. The adapter is at-least-once: a retry
+  after an ambiguous timeout can duplicate rows, and soma has no idempotency key. The
+  interop run against soma's `interop_server` passed by hand. The real write path
+  (auth, audit, insert) needs `TEST_DATABASE_URL` and has not been run.
+- **Policy.** `tonic` and `sync_wrapper` are banned in tpt-hands, so a regression fails
+  `cargo deny`. The MSRV is now 1.97, to match soma.
 - Sections 1-3 below describe the APIs as they were before these commits.
 
 ## 1. What the real APIs are

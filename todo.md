@@ -121,10 +121,10 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 2 — Ecosystem Adapters (Weeks 6–9)
 
 ### Soma adapter (`tpt-hands-soma-adapter`)
-- [x] Read real tpt-soma API/proto; document mapping from `PhysiologicalState` (done: `docs/ECOSYSTEM_INTEGRATION.md`. Finding: tpt-soma is a patient-data platform. Its Flight `do_put` and `do_action` are unimplemented, so there is no ingest path for device telemetry.)
-- [ ] Implement gRPC client streaming `PhysiologicalUpdate`
-- [ ] Reconnect, backpressure and buffering behaviour
-- [ ] Mock tpt-soma server for tests
+- [x] Read real tpt-soma API/proto; document mapping from `PhysiologicalState` (done: `docs/ECOSYSTEM_INTEGRATION.md`. Finding: tpt-soma is a patient-data platform. Its Flight `do_put` and `do_action` are unimplemented, so there is no ingest path for device telemetry. Since then soma has added the `device_state` DoPut.)
+- [x] Send device state to soma over Flight `DoPut`, using `SomaClient::put` in `tpt-hands-soma-adapter`. Soma's ingest is DoPut with Arrow IPC, not a streaming `PhysiologicalUpdate` RPC, so the client makes one buffered call per snapshot (`tpt-hands-grpc` `call_buffered`). The adapter validates each snapshot against soma's rules before sending. Soma's arrow-free encoding is `tpt-soma-flight`, pinned by commit.
+- [ ] Reconnect and backpressure. The buffered call holds the whole snapshot in memory and has no retry, so a timeout after send can duplicate rows (at-least-once).
+- [x] Mock tpt-soma server for tests (`tests/put.rs`), and an interop run against soma's `interop_server` (`tests/interop.rs`, ignored; passed by hand). The real soma write path (auth, audit, insert) needs `TEST_DATABASE_URL` and is not verified here.
 - [ ] Receive repair directives from soma where the API supports it
 
 ### Chrysalis adapter (`tpt-hands-chrysalis-adapter`)
