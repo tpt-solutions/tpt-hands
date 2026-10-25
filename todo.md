@@ -113,7 +113,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Watchdog, panic handler, safe-state defaults
 - [ ] Flash/debug tooling docs (probe-rs, espflash)
 - [ ] Hardware-in-the-loop CI plan (or documented manual test procedure)
-- [ ] End-to-end loopback: simulated tear → edge detects → reported via telemetry
+- [~] End-to-end loopback: simulated tear → edge detects → reported via telemetry (done in `crates/tpt-hands-integration`: the edge detects the tear and reroutes, with no host call. Telemetry to the host over tpt-link is not wired.)
 
 ---
 
@@ -142,11 +142,11 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Dockerfile / run instructions
 
 ### Integration
-- [ ] Integration test: Tear → Soma Update → Chrysalis Request → Ack
-- [ ] Integration test: Growth loop (cerebrum intent → ReinforceTendon → recalibration → updated capabilities)
-- [ ] `examples/sim_healing_loop` end-to-end mock
+- [~] Integration test: Tear → Soma Update → Chrysalis Request → Ack (chrysalis request and ack done, against the mock. The soma update is not built: the soma adapter is blocked on tpt-soma.)
+- [x] Integration test: Growth loop (cerebrum intent → ReinforceTendon → recalibration → updated capabilities). The intent is a direct SDK call, since there is no cerebrum client. Tests in `tests/growth_loop.rs`.
+- [x] `examples/sim_healing_loop` end-to-end mock (`cargo run -p tpt-hands-integration --example sim_healing_loop`)
 - [ ] `docs/ECOSYSTEM_INTEGRATION.md`
-- [ ] Failure-mode tests (soma down, chrysalis rejects, link drop mid-heal)
+- [~] Failure-mode tests (soma down, chrysalis rejects, link drop mid-heal). Done: chrysalis rejects, chrysalis unreachable, link drop mid-heal. Not done: soma down, since there is no soma adapter yet.
 
 ---
 
