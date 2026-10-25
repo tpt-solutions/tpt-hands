@@ -13,10 +13,10 @@ Decisions locked in:
 
 Licence findings (checked 2026-10-16, re-verify with cargo-deny / go-licenses):
 - Apache-2.0 only, BANNED: `prost`, `prost-build`, `tonic-prost` (MIT itself but depends on prost), `grpc-go`, connect-go
-- OK: `tonic` (MIT, supports custom codecs), `h2` (MIT), `micropb` + `micropb-gen` (MIT OR Apache-2.0, no_std), `protobuf` 4.x (BSD-3), `google.golang.org/protobuf` (BSD-3), `golang.org/x/net/http2` (BSD-3)
+- NOT OK: `tonic` 0.14, because it hard-depends on `sync_wrapper` (Apache-2.0 only). Dropped. OK: `hyper` / `hyper-util` / `http-body-util` (MIT), `h2` (MIT), `micropb` + `micropb-gen` (MIT OR Apache-2.0, no_std), `protobuf` 4.x (BSD-3), `google.golang.org/protobuf` (BSD-3), `golang.org/x/net/http2` (BSD-3)
 
 Protobuf/gRPC stack decision:
-- Rust host: `tonic` with a custom `Codec` + `micropb` (or `protobuf` 4.x) message types; no prost anywhere in the tree
+- Rust host: own gRPC layer on `hyper` + `micropb` (`crates/tpt-hands-grpc`, mirrors `tpt-grpc-lite`). tonic is dropped (see Phase 0). No prost, tonic or sync_wrapper in the tree.
 - Firmware (`no_std`): `micropb`
 - Go: `google.golang.org/protobuf` (BSD-3) + custom minimal gRPC client/server over `golang.org/x/net/http2` (write ourselves; no grpc-go)
 
@@ -39,13 +39,13 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Dependency licence policy
 - [x] Add `deny.toml` (cargo-deny): allow MIT, BSD-2/3, ISC, Zlib, Unicode, `MIT OR Apache-2.0`; deny Apache-2.0-only and copyleft
 - [ ] Add Go licence check (go-licenses) with same allow list
-- [ ] Re-verify licences of the full transitive tree for tonic + custom codec + micropb (cargo-deny) and protoc/protobuf-go toolchain. Result: the root workspace passes. tonic 0.14 fails, because it depends on `sync_wrapper` (Apache-2.0 only). See the decision below.
-- [x] Spike: tonic client/server with custom `Codec` backed by micropb; confirm no prost in `cargo tree` (`tools/grpc-spike`, standalone. Unary round trip passes, no prost in the tree, and it interops with `tpt-grpc-lite` in both directions. It is outside the root workspace because of the sync_wrapper finding.)
-  - DECISION NEEDED (recommendation: keep the policy; do not waive sync_wrapper). Rust host stack: tonic is out, because it cannot meet the Apache-only ban. Recommended instead: a small Rust gRPC layer on hyper + micropb, mirroring `tpt-grpc-lite`. The spike's `serve` and the hyper glue are the start of it. Alternative: request a policy waiver for `sync_wrapper`, which is a tiny, well-known Apache-2.0 crate.
+- [x] Re-verify licences of the full transitive tree for the Rust host stack and the protoc/protobuf-go toolchain (cargo-deny passes; tonic removed, see below)
+- [x] Spike: custom codec on micropb, no prost. Done with tonic first (`tools/grpc-spike`, since removed), then replaced by `crates/tpt-hands-grpc`, see the decision below.
+  - DECIDED: keep the licence policy, drop tonic. Rust host gRPC is `crates/tpt-hands-grpc` (hyper + micropb, unary, status trailers, deadlines, message limits, cleartext h2). It interops with `tpt-grpc-lite` in both directions, and the Go test lives in `go/tpt-hands-orchestrator/internal/interop`. Streaming, metadata, and TLS are still to do on the Rust side.
 - [ ] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document
 - [x] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata (`go/tpt-grpc-lite`; tests and benchmarks pass, see its README)
 - [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive tested against a frozen TCP peer, which fails the test when removed)
-- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust tonic, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Both directions pass against grpc-core (Python `grpc`), an independent implementation. Rust tonic and the real tpt-soma / tpt-chrysalis / tpt-swarm servers are still pending.
+- [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust `tpt-hands-grpc`, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Passes in both directions against grpc-core (Python `grpc`) and against `tpt-hands-grpc` (Go test). The real tpt-soma / tpt-chrysalis / tpt-swarm servers are still pending.
 - [x] Decide whether `tpt-grpc-lite` is a separate repo/module (reusable across TPT repos): separate Go module in this repo, at `go/tpt-grpc-lite`
 - [ ] Verify that the existing TPT repos' APIs can be consumed with the chosen stack; if any of them require features we skip (e.g. grpc-web, compression), list them
 - [ ] Wire licence checks into CI as a required gate (licence job added to `ci.yml`; still needs branch protection to make it required)
@@ -228,7 +228,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 - [x] **tpt-link is real and in use.** It lives at github.com/tpt-solutions/tpt-link (also cloned at C:\Programming	pt-link). tpt-hands depends on it at commit 8e23498 (v0.2.0 release; the tag is not pushed yet). Schema reconciled against proto/tpt_link.proto (package tpt.link.v1): no clashes. Open: request_id and command_id are candidates for the core (tpt-link spec section 13), a decision for the core maintainer.
 
-- [~] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes). Answered: the protobuf side passes. tonic does not (sync_wrapper). Decision above.
+- [x] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes). Protobuf, micropb, hyper and grpc-lite pass. tonic does not, and it was dropped.
 - [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
 - [ ] Decide whether `no_std` core types live in their own crate
 - [x] Serial transport crate, decided. `serialport` is MPL-2.0 (checked with `cargo info`), so it is banned. Adopted `serial2` 0.2.38 (BSD-2-Clause OR Apache-2.0), behind the optional `serial` feature of `tpt-link`. Rejected: `tokio-serial` and `mio-serial` (MIT, but pull in an async runtime), `serial-rs` (GPL-2.0-or-later). `cargo deny` passes with all features.
