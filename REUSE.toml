@@ -20,3 +20,17 @@ path = [
 ]
 SPDX-FileCopyrightText = "2026 TPT Solutions"
 SPDX-License-Identifier = "MIT OR Apache-2.0"
+
+# Generated code, lockfiles and go.sum: regenerated or rewritten by tooling,
+# so the header lives here rather than in the file.
+[[annotations]]
+path = [
+    "crates/tpt-hands-handshake/fuzz/Cargo.lock",
+    "crates/tpt-hands-proto/fuzz/Cargo.lock",
+    "crates/tpt-hands-proto/src/generated/tpt_hands.rs",
+    "firmware/esp32p4-bringup/Cargo.lock",
+    "go/tpt-grpc-lite/go.sum",
+    "go/tpt-hands-orchestrator/go.sum",
+]
+SPDX-FileCopyrightText = "2026 TPT Solutions"
+SPDX-License-Identifier = "MIT OR Apache-2.0"
