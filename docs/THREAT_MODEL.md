@@ -50,6 +50,7 @@ Out of scope for now:
 | T6 | Cable pulled mid-handshake | Failure leaves the relay open, which is the de-energised safe state | Relay open time on hardware not measured |
 | T7 | Corrupted frames | Frame CRC in `tpt-hands-proto::frame` | CRC is not a MAC; it detects noise, not tampering |
 | T8 | Clock skew | Handshake uses counters and timeouts, not wall-clock time | Timeout source on the MCU is not specified |
+| T9 | Two overlapping handshakes reuse one counter, so the second response closes the relay with a counter that is no longer new | **Fixed.** The counter is now checked when the response arrives as well as when the hello arrives. Test: `tests/concurrent_counter.rs`. Found while writing `docs/HANDSHAKE.md`. | Not yet covered by the formal model (todo.md, Phase 3) |
 
 ## Assumptions
 
