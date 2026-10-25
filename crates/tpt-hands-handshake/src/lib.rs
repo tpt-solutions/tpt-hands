@@ -221,6 +221,14 @@ impl Verifier {
         if response.counter != pending.hello.counter {
             return Err(Reason::OutOfOrder);
         }
+        // Checked at response time as well as at hello time. Another handshake
+        // may have completed while this one was pending, and it may have used the
+        // same counter.
+        if let Some(&last) = self.last_counter.get(&pending.hello.tool_id) {
+            if response.counter <= last {
+                return Err(Reason::ReplayedCounter);
+            }
+        }
         let presented =
             VerifyingKey::from_bytes(&response.public_key).map_err(|_| Reason::MalformedKey)?;
         let enrolled = self
