@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 TPT Solutions
+
+[package]
+name = "esp32p4-bringup"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# Standalone, not in the workspace: it targets riscv32imafc and needs esp-hal.
+[workspace]
+
+[dependencies]
+tpt-hands-edge = { path = "../../crates/tpt-hands-edge" }
+esp-hal = { version = "1.2", features = ["esp32p4", "unstable"] }
+esp-println = { version = "0.18", default-features = false, features = ["esp32p4", "jtag-serial"] }
+esp-bootloader-esp-idf = { version = "0.6", features = ["esp32p4"] }
+esp-backtrace = { version = "0.20", features = ["esp32p4", "panic-handler", "println"] }
+
+[profile.release]
+opt-level = "s"
+debug = 2
