@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 TPT Solutions
+
+[package]
+name = "tpt-hands-handshake-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+ed25519-dalek = "3.0.0"
+tpt-hands-handshake = { path = ".." }
+
+[[bin]]
+name = "forged_response"
+path = "fuzz_targets/forged_response.rs"
+test = false
+doc = false
+bench = false
+
+# Not part of the main workspace. cargo-fuzz needs nightly.
+[workspace]

@@ -16,7 +16,7 @@ default = ["std"]
 # `std` implies `alloc`, and adds the std::error::Error impl.
 std = ["alloc"]
 # Generated message types and the encoder. Needs a heap for Vec and String.
-alloc = ["dep:micropb", "micropb/alloc"]
+alloc = ["dep:micropb", "micropb/alloc", "tpt-link/alloc"]
 
 [dependencies]
 # Frame format, from the tpt-link repo.
