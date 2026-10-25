@@ -184,10 +184,10 @@ impl Verifier {
         if hello.nonce == [0u8; NONCE_LEN] || challenge_nonce == [0u8; NONCE_LEN] {
             return Err(Reason::BadNonce);
         }
-        if let Some(&last) = self.last_counter.get(&hello.tool_id) {
-            if hello.counter <= last {
-                return Err(Reason::ReplayedCounter);
-            }
+        if let Some(&last) = self.last_counter.get(&hello.tool_id)
+            && hello.counter <= last
+        {
+            return Err(Reason::ReplayedCounter);
         }
         let challenge = Challenge {
             nonce: challenge_nonce,
@@ -224,10 +224,10 @@ impl Verifier {
         // Checked at response time as well as at hello time. Another handshake
         // may have completed while this one was pending, and it may have used the
         // same counter.
-        if let Some(&last) = self.last_counter.get(&pending.hello.tool_id) {
-            if response.counter <= last {
-                return Err(Reason::ReplayedCounter);
-            }
+        if let Some(&last) = self.last_counter.get(&pending.hello.tool_id)
+            && response.counter <= last
+        {
+            return Err(Reason::ReplayedCounter);
         }
         let presented =
             VerifyingKey::from_bytes(&response.public_key).map_err(|_| Reason::MalformedKey)?;

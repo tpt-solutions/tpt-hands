@@ -194,12 +194,13 @@ pub fn decode_message(s: &str) -> String {
     let mut out = Vec::with_capacity(bytes.len());
     let mut i = 0;
     while i < bytes.len() {
-        if bytes[i] == b'%' && i + 2 < bytes.len() {
-            if let Ok(v) = u8::from_str_radix(&s[i + 1..i + 3], 16) {
-                out.push(v);
-                i += 3;
-                continue;
-            }
+        if bytes[i] == b'%'
+            && i + 2 < bytes.len()
+            && let Ok(v) = u8::from_str_radix(&s[i + 1..i + 3], 16)
+        {
+            out.push(v);
+            i += 3;
+            continue;
         }
         out.push(bytes[i]);
         i += 1;
@@ -476,10 +477,10 @@ impl Client {
                 .map_err(|e| Status::new(Code::Unavailable, format!("transport: {e}")))?;
             let (parts, body) = resp.into_parts();
             // A trailers-only response carries the status in the headers.
-            if let Some(status) = status_from(&parts.headers) {
-                if status.code != Code::Ok {
-                    return Err(status);
-                }
+            if let Some(status) = status_from(&parts.headers)
+                && status.code != Code::Ok
+            {
+                return Err(status);
             }
             let collected = Limited::new(body, self.max_recv + FRAME_HEADER_LEN)
                 .collect()
@@ -494,10 +495,10 @@ impl Client {
                     }
                 })?;
             let trailers = collected.trailers().cloned().unwrap_or_default();
-            if let Some(status) = status_from(&trailers) {
-                if status.code != Code::Ok {
-                    return Err(status);
-                }
+            if let Some(status) = status_from(&trailers)
+                && status.code != Code::Ok
+            {
+                return Err(status);
             }
             let data = collected.to_bytes();
             let payload = decode_frame(&data, self.max_recv)?;
@@ -629,10 +630,10 @@ impl Client {
                 .map_err(|e| Status::new(Code::Unavailable, format!("transport: {e}")))?;
             let (parts, body) = resp.into_parts();
             // A status in the headers ends the call, before any body is read.
-            if let Some(status) = status_from(&parts.headers) {
-                if status.code != Code::Ok {
-                    return Err(status);
-                }
+            if let Some(status) = status_from(&parts.headers)
+                && status.code != Code::Ok
+            {
+                return Err(status);
             }
             let collected = Limited::new(body, self.max_recv)
                 .collect()
@@ -649,10 +650,10 @@ impl Client {
             // Errors arrive in the trailers, possibly after zero messages. Check
             // them before parsing any frame.
             let trailers = collected.trailers().cloned().unwrap_or_default();
-            if let Some(status) = status_from(&trailers) {
-                if status.code != Code::Ok {
-                    return Err(status);
-                }
+            if let Some(status) = status_from(&trailers)
+                && status.code != Code::Ok
+            {
+                return Err(status);
             }
             let data = collected.to_bytes();
             let frames = decode_frames(&data, self.max_recv, self.max_recv)?;

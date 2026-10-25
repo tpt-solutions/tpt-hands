@@ -226,10 +226,10 @@ impl SimulatedHand {
 
         if self.recalibration_left_us > 0 {
             self.recalibration_left_us = self.recalibration_left_us.saturating_sub(dt);
-            if self.recalibration_left_us == 0 {
-                if let Some(max_n) = self.recalibrating_to_n.take() {
-                    self.capabilities.max_force_n = max_n;
-                }
+            if self.recalibration_left_us == 0
+                && let Some(max_n) = self.recalibrating_to_n.take()
+            {
+                self.capabilities.max_force_n = max_n;
             }
         }
 
