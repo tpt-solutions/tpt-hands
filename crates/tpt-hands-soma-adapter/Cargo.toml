@@ -3,7 +3,7 @@
 
 [package]
 name = "tpt-hands-soma-adapter"
-description = "Streams PhysiologicalState from tpt-hands to tpt-soma over gRPC"
+description = "Syncs PhysiologicalState to tpt-soma over Arrow Flight DoPut, using tpt-soma's in-house Flight encoding (no arrow crate)"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -12,3 +12,18 @@ authors.workspace = true
 publish.workspace = true
 
 [dependencies]
+tpt-hands-sdk = { version = "0.1.0", path = "../tpt-hands-sdk" }
+tpt-hands-grpc = { version = "0.1.0", path = "../tpt-hands-grpc" }
+# tpt-soma-flight is MIT OR Apache-2.0 and has no tonic when default features are
+# off. Pinned to a commit on tpt-soma master, so builds are reproducible.
+tpt-soma-flight = { version = "0.1.0", git = "https://github.com/tpt-solutions/tpt-soma", rev = "72551ecf116b2ee2ab5006c8f59573f7b704f248", default-features = false }
+bytes = "1"
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time"] }
+hyper = { version = "1", features = ["http2", "server"] }
+hyper-util = { version = "0.1", features = ["tokio", "server-auto", "http2"] }
+http = "1"
+http-body-util = "0.1"
+futures-util = { version = "0.3", default-features = false }
