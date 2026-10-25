@@ -48,6 +48,10 @@ jobs:
         run: cargo run -q -p proto-gen
       - name: Fail if the committed code is stale
         run: git diff --exit-code -- crates/tpt-hands-proto/src/generated
+      - name: Proto compatibility tests
+        run: cd tools/proto-compat && python3 -m unittest test_proto_compat
+      - name: Breaking-change check against the baseline
+        run: python3 tools/proto-compat/proto_compat.py proto/baseline/tpt_hands.proto proto/tpt_hands.proto
 
   go:
     name: Go (${{ matrix.os }})

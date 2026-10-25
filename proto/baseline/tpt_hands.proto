@@ -1,0 +1,158 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Copyright (c) 2026 TPT Solutions
+
+// Reconciled against tpt-link v0.2.0, proto/tpt_link.proto (package tpt.link.v1):
+// no name clashes. This file uses none of the core messages (Heartbeat, Ack,
+// Error), so it does not import that file.
+//
+// Still provisional at the message level. Two fields are candidates for the
+// shared core, per tpt-link spec section 13: request_id on MorphogenesisRequest
+// and command_id on ToolCommand. Moving them is the core maintainer's decision.
+// Messages marked PROVISIONAL below have not been reviewed against the design.
+
+syntax = "proto3";
+
+package tpt.hands.v1;
+
+// Health of one pathway, as the edge reports it.
+message PathwayHealth {
+  uint32 id = 1;
+  PathwayState state = 2;
+  float healing_progress = 3;  // meaningful only when state is SEVERED
+  float resistance_ohms = 4;
+  float max_bandwidth_mbps = 5;
+}
+
+enum PathwayState {
+  PATHWAY_STATE_INTACT = 0;
+  PATHWAY_STATE_SEVERED = 1;
+  PATHWAY_STATE_HYPERTROPHIED = 2;
+}
+
+// Physiological state, streamed to tpt-soma.
+message PhysiologicalUpdate {
+  string tool_id = 1;
+  float structural_integrity = 2;
+  repeated PathwayHealth pathways = 3;
+  uint64 timestamp_us = 4;
+}
+
+message HealPathwayAction {
+  uint32 pathway_id = 1;
+  bool heat_assist = 2;
+}
+
+message SproutConduitAction {
+  uint32 origin = 1;
+  uint32 destination = 2;
+  FluidType fluid_type = 3;
+}
+
+message ReinforceTendonAction {
+  uint32 tendon_id = 1;
+  float volume_ml = 2;
+}
+
+enum FluidType {
+  FLUID_TYPE_UNSPECIFIED = 0;  // proto3 needs a zero value; not a valid fluid
+  FLUID_TYPE_SELF_HEALING_ELASTOMER = 1;
+  FLUID_TYPE_LIQUID_METAL = 2;
+  FLUID_TYPE_HYDROGEL = 3;
+}
+
+message SafetyEnvelope {
+  float max_pressure_kpa = 1;
+  float max_temperature_c = 2;
+  float max_volume_ml = 3;
+}
+
+// Request from tpt-hands to tpt-chrysalis. It never actuates pumps directly.
+message MorphogenesisRequest {
+  string tool_id = 1;
+  // GAP: DESIGN.md has no request id, but MorphogenesisAck refers to one.
+  // Added here so the ack can be matched to its request.
+  string request_id = 2;
+  oneof action {
+    HealPathwayAction heal = 10;
+    SproutConduitAction sprout = 11;
+    ReinforceTendonAction reinforce = 12;
+  }
+  SafetyEnvelope safety_limits = 99;
+}
+
+// Reply from tpt-chrysalis.
+message MorphogenesisAck {
+  string request_id = 1;
+  bool approved = 2;
+  string chrysalis_job_id = 3;  // tracked by tpt-chrysalis
+}
+
+// ---------------------------------------------------------------------------
+// PROVISIONAL. Everything below is drafted from the wording of DESIGN.md
+// (sections 4.1, 5 and 7) and the SDK types. It is not in the spec's section 6,
+// so it is unreconciled. The handshake messages only fix shapes and field
+// sizes. The security design (key storage, rotation, replay windows) is
+// Phase 3 work in todo.md.
+// ---------------------------------------------------------------------------
+
+// Telemetry sample from an end-effector (SDK type ToolTelemetry).
+message ToolTelemetry {
+  string tool_id = 1;
+  uint64 timestamp_us = 2;
+  float force_n = 3;
+  float structural_integrity = 4;
+}
+
+// A command from tpt-cerebrum to an end-effector (SDK type ToolIntent).
+message GraspIntent {
+  float force_n = 1;
+}
+
+message ReleaseIntent {}
+
+message PrepareReinforcementIntent {
+  float target_force_n = 1;
+}
+
+message ToolCommand {
+  string tool_id = 1;
+  // GAP: not in DESIGN.md. Added so a command can be acknowledged, the same
+  // way request_id matches a MorphogenesisAck.
+  string command_id = 2;
+  oneof intent {
+    GraspIntent grasp = 10;
+    ReleaseIntent release = 11;
+    PrepareReinforcementIntent prepare_reinforcement = 12;
+  }
+}
+
+// Result of a command, returned to tpt-cerebrum.
+message CommandAck {
+  string command_id = 1;
+  bool accepted = 2;
+  string reason = 3;  // set when not accepted, e.g. "exceeds capability"
+}
+
+// Power handshake, sent in the order DESIGN.md section 7 gives: data pins mate
+// first, then this challenge/response, then the relay closes. Sizes follow
+// Ed25519 (RFC 8032): 32-byte public key, 64-byte signature.
+message HandshakeHello {
+  string tool_id = 1;
+  bytes nonce = 2;      // fresh random bytes from the device, 16 or more
+  uint64 counter = 3;   // monotonic per device, for replay detection
+}
+
+message HandshakeChallenge {
+  bytes nonce = 1;      // the source's own nonce, to be signed by the device
+}
+
+message HandshakeResponse {
+  bytes public_key = 1; // 32 bytes
+  bytes signature = 2;  // 64 bytes, over the hello and challenge nonces
+  uint64 counter = 3;
+}
+
+message RelayState {
+  bool relay_closed = 1;
+  string reason = 2;    // set when the relay stays open
+}

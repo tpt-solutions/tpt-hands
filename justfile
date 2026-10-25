@@ -36,3 +36,8 @@ proto-go:
 # Regenerate the third-party licence notice for the Rust workspace.
 third-party:
     cargo about generate about.hbs -o THIRD_PARTY_LICENSES.md
+
+# Breaking-change check for the proto against its baseline. See docs/PROTO_COMPATIBILITY.md.
+proto-compat:
+    cd tools/proto-compat && python -m unittest test_proto_compat
+    python tools/proto-compat/proto_compat.py proto/baseline/tpt_hands.proto proto/tpt_hands.proto
