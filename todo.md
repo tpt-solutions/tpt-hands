@@ -32,13 +32,13 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Add per-file SPDX licence headers / REUSE config (`REUSE.toml` plus `LICENSES/`; `reuse lint` passes)
 - [x] Set `license = "MIT OR Apache-2.0"` in all Cargo.toml files and `go` module metadata (Cargo via workspace inheritance; Go modules have no licence field, so the SPDX header is the equivalent)
 - [x] Add README licence section + CONTRIBUTING (contributions dual-licensed by default)
-- [~] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses). Rust done: `THIRD_PARTY_LICENSES.md` from `about.toml` and `about.hbs`, regenerate with `just third-party`. Go (go-licenses) still pending.
+- [~] Add `NOTICE`/`THIRD_PARTY_LICENSES` generation (cargo-about / go-licenses). Rust done: `THIRD_PARTY_LICENSES.md` from `about.toml` and `about.hbs`, regenerate with `just third-party`. Go licence check passes for both modules (CI). The Go notice file is still to generate.
 - [x] Add CODE_OF_CONDUCT, SECURITY.md, issue/PR templates (the CoC and SECURITY.md contact address still need confirming)
 - [x] Move `spec.txt` to `DESIGN.md` (and fix it to match decisions above)
 
 ### Dependency licence policy
 - [x] Add `deny.toml` (cargo-deny): allow MIT, BSD-2/3, ISC, Zlib, Unicode, `MIT OR Apache-2.0`; deny Apache-2.0-only and copyleft
-- [ ] Add Go licence check (go-licenses) with same allow list
+- [x] Add Go licence check (go-licenses) with same allow list (run in CI for both modules, with `--ignore` for the project's own modules, which have no licence file of their own)
 - [x] Re-verify licences of the full transitive tree for the Rust host stack and the protoc/protobuf-go toolchain (cargo-deny passes; tonic removed, see below)
 - [x] Spike: custom codec on micropb, no prost. Done with tonic first (`tools/grpc-spike`, since removed), then replaced by `crates/tpt-hands-grpc`, see the decision below.
   - DECIDED: keep the licence policy, drop tonic. Rust host gRPC is `crates/tpt-hands-grpc` (hyper + micropb, unary, status trailers, deadlines, message limits, cleartext h2). It interops with `tpt-grpc-lite` in both directions, and the Go test lives in `go/tpt-hands-orchestrator/internal/interop`. Streaming, metadata, and TLS are still to do on the Rust side.
@@ -205,7 +205,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ### Docs
 - [x] `docs/ADDING_A_TOOL.md`
 - [ ] API docs complete and published
-- [ ] Architecture overview, wire protocol reference, power handshake spec
+- [~] Architecture overview (done: `docs/ARCHITECTURE.md`, states what is built). Wire protocol reference and power handshake spec still to write.
 - [ ] Firmware porting guide (adding another MCU)
 - [ ] Wiring/bring-up guide for ESP32 and STM32 dev boards (no CAD)
 
