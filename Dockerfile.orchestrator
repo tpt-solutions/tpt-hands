@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 TPT Solutions
+#
+# Builds the Go orchestrator. Build from the repository root, because the module
+# depends on ../tpt-grpc-lite through a replace directive:
+#
+#   docker build -f Dockerfile.orchestrator -t tpt-hands-orchestrator .
+#
+# NOT BUILT YET. The image has not been built or run, because the Docker daemon
+# was not running when this was written. Check it before relying on it.
+
+FROM golang:1.26-alpine AS build
+WORKDIR /src
+COPY go/tpt-grpc-lite ./go/tpt-grpc-lite
+COPY go/tpt-hands-orchestrator ./go/tpt-hands-orchestrator
+WORKDIR /src/go/tpt-hands-orchestrator
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/orchestrator .
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /out/orchestrator /orchestrator
+ENV TPT_HANDS_LISTEN_ADDR=0.0.0.0:8080 \
+    TPT_HANDS_LOG_LEVEL=info
+EXPOSE 8080
+USER nonroot:nonroot
+ENTRYPOINT ["/orchestrator"]
