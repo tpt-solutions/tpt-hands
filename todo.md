@@ -102,7 +102,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 
 ### Edge firmware (`tpt-hands-edge`)
 - [ ] HAL abstraction layer so logic is shared across MCUs
-- [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up (`tpt-hands-edge` compiles for `riscv32imc-unknown-none-elf`; the C6 core is `riscv32imac`, so that target still needs installing; bring-up needs hardware)
+- [ ] ESP32 target (RISC-V variant preferred) — esp-hal / embassy bring-up (`tpt-hands-edge` compiles for `riscv32imc-unknown-none-elf`; the C6 core is `riscv32imac`, so that target now builds too (installed); bring-up needs hardware)
 - [ ] STM32 target — embassy-stm32 bring-up on STM32G4 (reference family) (`tpt-hands-edge` compiles for `thumbv7em-none-eabihf`; embassy bring-up needs hardware)
 - [ ] 1 kHz reflex loop with timing/jitter measurement
 - [x] Slip / overload reflexes (`reflex::GripReflex`, pure logic, tested on host; wired to force sensing on hardware pending)
@@ -206,7 +206,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] `docs/ADDING_A_TOOL.md`
 - [ ] API docs complete and published
 - [~] Architecture overview (done: `docs/ARCHITECTURE.md`, states what is built). Wire protocol reference and power handshake spec still to write.
-- [ ] Firmware porting guide (adding another MCU)
+- [x] Firmware porting guide (adding another MCU): `docs/PORTING_FIRMWARE.md`. States the HAL pieces a port needs, what builds, and what is not ready.
 - [ ] Wiring/bring-up guide for ESP32 and STM32 dev boards (no CAD)
 
 ### Quality
@@ -215,7 +215,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Soak test: long-running link with fault injection (in-process: 20k messages over Loopback with bursts of drops and corruption; checks no damaged frame is delivered, CRC failures match corruption, and sequence gaps match every missing frame. Runs in `cargo test`. A hardware soak is still to do.)
 - [x] Performance benchmarks: reflex loop latency, link throughput (host-only, on loopback: `cargo bench -p tpt-hands-edge --bench reflex_tick`, `cargo bench -p tpt-hands-proto --bench link_throughput`, plus `go test -bench` in `go/tpt-grpc-lite`. MCU and real-link numbers still need hardware.)
 - [ ] Final licence audit (all crates + Go modules + vendored protos) and `THIRD_PARTY_LICENSES`
-- [ ] Semver and release process, CHANGELOG
+- [x] Semver and release process, CHANGELOG (`CHANGELOG.md`, and `docs/RELEASING.md` with the gates before a tag)
 - [ ] Publish all crates; tag v1.0
 
 ### v1.0 success criteria checklist
