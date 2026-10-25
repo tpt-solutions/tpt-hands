@@ -11,7 +11,23 @@ license.workspace = true
 authors.workspace = true
 publish.workspace = true
 
+[features]
+default = ["http"]
+# HTTP client for tpt-chrysalis, in `transport`. Turn it off for a pure mapping build.
+http = ["dep:hyper", "dep:hyper-util", "dep:http", "dep:http-body-util", "dep:bytes", "dep:tokio"]
+
 [dependencies]
 tpt-hands-sdk = { version = "0.1.0", path = "../tpt-hands-sdk" }
 serde = { workspace = true }
 serde_json = { workspace = true }
+bytes = { version = "1", optional = true }
+http = { version = "1", optional = true }
+http-body-util = { version = "0.1", optional = true }
+hyper = { version = "1", features = ["client", "http1"], optional = true }
+hyper-util = { version = "0.1", features = ["client-legacy", "tokio", "http1"], optional = true }
+tokio = { version = "1", features = ["time"], optional = true }
+
+[dev-dependencies]
+hyper = { version = "1", features = ["server", "http1"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time"] }
+hyper-util = { version = "0.1", features = ["tokio"] }

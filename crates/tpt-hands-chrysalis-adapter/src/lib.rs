@@ -5,8 +5,9 @@
 //!
 //! This crate turns a request into the body tpt-chrysalis accepts at
 //! `POST /api/v1/device-commands`, reads the answer, and tracks the job through
-//! its lifecycle. It does no network I/O, so every part is testable on its own.
-//! The transport is added later.
+//! its lifecycle. The mapping and the lifecycle do no I/O. The `http` feature (on
+//! by default) adds the HTTP client in [`transport`], which is built against the
+//! proposed interface, not the real service.
 //!
 //! Against the current tpt-chrysalis (commit `58a4dc6`), every command is refused
 //! with 422 until its kind is approved. This adapter reports that refusal as an
@@ -16,6 +17,9 @@
 //! Safety limits are sent as parameters under their own names. They are not
 //! converted to chrysalis gate variables, because the units differ (kPa against
 //! `pressure_mbar`). That conversion is for the chrysalis owners to define.
+
+#[cfg(feature = "http")]
+pub mod transport;
 
 use std::collections::BTreeMap;
 
