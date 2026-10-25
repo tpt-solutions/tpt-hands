@@ -42,7 +42,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Re-verify licences of the full transitive tree for the Rust host stack and the protoc/protobuf-go toolchain (cargo-deny passes; tonic removed, see below)
 - [x] Spike: custom codec on micropb, no prost. Done with tonic first (`tools/grpc-spike`, since removed), then replaced by `crates/tpt-hands-grpc`, see the decision below.
   - DECIDED: keep the licence policy, drop tonic. Rust host gRPC is `crates/tpt-hands-grpc` (hyper + micropb, unary, status trailers, deadlines, message limits, cleartext h2). It interops with `tpt-grpc-lite` in both directions, and the Go test lives in `go/tpt-hands-orchestrator/internal/interop`. Streaming, metadata, and TLS are still to do on the Rust side.
-- [ ] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document
+- [x] Spike: micropb-gen vs `protobuf` 4.x for host-side types; pick one and document. Decision: micropb, which is used throughout (`tpt-hands-proto`, `tpt-hands-grpc`). `protobuf` 4.x was not evaluated, because micropb already covers the no_std path.
 - [x] Write `tpt-grpc-lite` Go package: gRPC framing (5-byte length-prefixed messages), HTTP/2 via x/net/http2, trailers/status codes, unary + server/client/bidi streaming, deadlines, metadata (`go/tpt-grpc-lite`; tests and benchmarks pass, see its README)
 - [x] Go: TLS/mTLS, keepalive, and reconnect support in `tpt-grpc-lite` (TLS and mTLS tested; reconnect tested across a server restart; keepalive tested against a frozen TCP peer, which fails the test when removed)
 - [ ] Interop tests: Go `tpt-grpc-lite` ↔ Rust `tpt-hands-grpc`, and both ↔ the real tpt-soma / tpt-chrysalis / tpt-swarm servers (wire-compat with their grpc). Passes in both directions against grpc-core (Python `grpc`) and against `tpt-hands-grpc` (Go test). The real tpt-soma / tpt-chrysalis / tpt-swarm servers are still pending.
@@ -57,7 +57,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Go module setup under `go/tpt-hands-orchestrator` (module path `github.com/tpt-solutions/tpt-hands/...`, matching origin)
 - [x] CI (GitHub Actions): build, test, fmt, clippy, deny, Go vet/test, on Linux + Windows (licence and REUSE jobs included)
 - [x] Pre-commit hooks / justfile / xtask for common commands (`justfile` and `.pre-commit-config.yaml`)
-- [ ] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions (tpt-link: recreated locally, schema still to import; the others are public under TPT-Solutions)
+- [~] Import the real tpt-link, tpt-soma, tpt-chrysalis, tpt-cerebrum, tpt-swarm `.proto` files (vendored or submodule) and record versions. tpt-link: vendored at `proto/vendor/tpt_link.proto`, from commit 8e23498 (the pinned release). tpt-soma: only sample schemas in its repo, not its device API. tpt-chrysalis: no proto, since its API is REST. tpt-cerebrum and tpt-swarm are not on this machine.
 
 ### Core types & traits (`tpt-hands-sdk`)
 - [x] Define `EndEffector` trait (`identity`, `capabilities`, `command`, `next_telemetry`, `physiological_state`)
@@ -66,7 +66,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Define `MorphogenesisRequest`, `MorphAction`, `SafetyEnvelope`, `FluidType`, `ChannelId`, `TendonId`
 - [x] Decide telemetry channel type: pull model, `next_telemetry() -> Option<ToolTelemetry>`, bounded queue (no runtime dependency)
 - [x] Decide sync vs async API: synchronous, so no async runtime is pulled in
-- [ ] Decide `no_std` split (core types crate usable by firmware); SDK still uses `std`
+- [x] Decide `no_std` split (core types crate usable by firmware); SDK still uses `std`. Decision: no split now. The no_std path already works through the `alloc` and `std` features, and the edge crate builds for all three MCU targets. Revisit if firmware needs types the edge crate does not have.
 - [ ] Unit tests and doc examples for every public type (done for the state machine, `ToolIdentity`, `ToolCapabilities`, the clocks and `SimulatedHand`; other types still need examples)
 - [x] `SimulatedHand` mock driver
   - [x] Healing state machine (Intact → Severed → healing_progress → Intact)
@@ -81,7 +81,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 ## Phase 1 — Edge Reflexes & Protocol (Weeks 3–5)
 
 ### Wire protocol (`tpt-hands-proto`)
-- [ ] Reconcile spec Protobuf messages with the real tpt-link schema (PROVISIONAL draft at `proto/tpt_hands.proto`, transcribed from DESIGN.md section 6; no real tpt-link `.proto` is available on this machine. Gap found: the request has no id to match the ack, so `request_id` was added as field 2.)
+- [~] Reconcile spec Protobuf messages with the real tpt-link schema. The vendored tpt_link.proto (Heartbeat, Ack, Error) has no name clashes with tpt-hands. The open question is still whether `request_id` and `command_id` move into the core, which is the core maintainer's decision.
 - [x] Define `PhysiologicalUpdate`, `PathwayHealth`, `MorphogenesisRequest`, `MorphogenesisAck`, `SafetyEnvelope` and action messages (provisional, see the reconcile item above)
 - [x] Add telemetry, command/intent and power-handshake messages (PROVISIONAL, drafted from the spec wording. Handshake shapes only: the security design is Phase 3. Gap: `command_id` added to `ToolCommand` so commands can be acked. 8 golden fixtures from Go protobuf.)
 - [x] Define versioning/compat rules and a `buf`-style breaking-change check (rules in `docs/PROTO_COMPATIBILITY.md`; stdlib checker `tools/proto-compat/proto_compat.py` against `proto/baseline/`, run in CI. It catches removed, renamed, renumbered and retyped items. It does not handle `reserved` yet.)
@@ -110,7 +110,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] Fail-soft load redistribution and telemetry rerouting (Pathway A → B) (`reflex::pick_route`)
 - [x] Pathway state machine on-device (Intact / Severed / Hypertrophied) (debounced tear and healing; `PathwayMonitor::reinforce` marks a usable pathway Hypertrophied on host command, and it is still watched for tears)
 - [ ] Local micro-calibration cycle (500 ms) after morphology change
-- [ ] Watchdog, panic handler, safe-state defaults
+- [~] Watchdog, panic handler, safe-state defaults. Done in `crates/tpt-hands-edge/src/safety.rs`: a latching watchdog and the safe outputs (relay open, grip released), host-tested. The panic handler and the firmware wiring are not written.
 - [ ] Flash/debug tooling docs (probe-rs, espflash)
 - [ ] Hardware-in-the-loop CI plan (or documented manual test procedure)
 - [~] End-to-end loopback: simulated tear → edge detects → reported via telemetry (done in `crates/tpt-hands-integration`: the edge detects the tear and reroutes, with no host call. Telemetry to the host over tpt-link is not wired.)
@@ -139,7 +139,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Health/metrics endpoint, structured logging, config (done: `/healthz` and `/version`, JSON `slog`, env config with startup validation, graceful shutdown. Metrics endpoint pending.)
 - [ ] Cerebrum-facing intent path (capability queries, prepare-for-reinforcement)
 - [ ] Integration tests against mocks
-- [ ] Dockerfile / run instructions
+- [~] Dockerfile / run instructions. Written: `Dockerfile.orchestrator` (from the repo root) and `go/tpt-hands-orchestrator/README.md`. NOT BUILT: the Docker daemon was not running. The Go compile step with the image flags was checked locally.
 
 ### Integration
 - [~] Integration test: Tear → Soma Update → Chrysalis Request → Ack (chrysalis request and ack done, against the mock. The soma update is not built: the soma adapter is blocked on tpt-soma.)
@@ -171,10 +171,10 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [ ] Document assumptions and what is not covered by the proofs
 
 ### Tooling & testing
-- [ ] CLI simulator for handshake fault injection
-- [ ] Fault cases: bad signature, replay, mid-handshake cable pull, clock skew, corrupted frames
+- [x] CLI simulator for handshake fault injection (`handshake-sim`, eight cases, including overlapping counters)
+- [~] Fault cases: bad signature, replay, mid-handshake cable pull, clock skew, corrupted frames. Covered in `handshake-sim`: all but corrupted frames. Corrupted frames are dropped by the link's CRC, and the link's soak and fuzz tests cover that, so they are not repeated here.
 - [ ] Physical fault-injection test procedure (cable yanked → relay opens in < 1 ms) and recorded result
-- [ ] `examples/smart_socket_bringup`
+- [x] `examples/smart_socket_bringup` (software walk-through: enrol, handshake, replay refused, impostor refused. The hardware bring-up is still open.)
 - [ ] Security review of the handshake and key handling
 
 ---
@@ -229,7 +229,7 @@ STM32 reference family: **STM32G4** (e.g. G474/G431) — embassy-stm32 support, 
 - [x] **tpt-link is real and in use.** It lives at github.com/tpt-solutions/tpt-link (also cloned at C:\Programming	pt-link). tpt-hands depends on it at commit 8e23498 (v0.2.0 release; the tag is not pushed yet). Schema reconciled against proto/tpt_link.proto (package tpt.link.v1): no clashes. Open: request_id and command_id are candidates for the core (tpt-link spec section 13), a decision for the core maintainer.
 
 - [x] Confirm protobuf/gRPC stack passes the Apache-only rule (blocking for Phase 1; see Phase 0 spikes). Protobuf, micropb, hyper and grpc-lite pass. tonic does not, and it was dropped.
-- [ ] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only, so likely classic CAN as baseline, FD optional)
-- [ ] Decide whether `no_std` core types live in their own crate
+- [x] Decide CAN vs CAN-FD (STM32G4 has FDCAN; ESP32-C6 is classic CAN only). Decision: classic CAN is the baseline. The fragment codec takes the MTU as a parameter, so FD is a configuration change.
+- [x] Decide whether `no_std` core types live in their own crate. Decision: not now, for the same reason as the split above.
 - [x] Serial transport crate, decided. `serialport` is MPL-2.0 (checked with `cargo info`), so it is banned. Adopted `serial2` 0.2.38 (BSD-2-Clause OR Apache-2.0), behind the optional `serial` feature of `tpt-link`. Rejected: `tokio-serial` and `mio-serial` (MIT, but pull in an async runtime), `serial-rs` (GPL-2.0-or-later). `cargo deny` passes with all features.
 - [x] `tpt-hands-proto::frame` `no_std` decode path: decoding needs only `core`, and encoding is behind the `alloc` feature. `tpt-hands-edge` uses it and compiles for both MCU targets.
