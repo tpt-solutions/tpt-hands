@@ -106,6 +106,18 @@ fn unknown_device() -> Relay {
     }
 }
 
+/// Two handshakes are pending with the same counter. The first closes the
+/// relay, and the second must be refused. This is the case fixed in T9.
+fn overlapping_counter() -> Relay {
+    let mut v = fresh_verifier();
+    let (ch_a, pending_a) = v.on_hello(0, hello(6), [2u8; NONCE_LEN]).unwrap();
+    let (ch_b, pending_b) = v.on_hello(0, hello(6), [3u8; NONCE_LEN]).unwrap();
+    let resp_a = respond(&device(), &hello(6), &ch_a);
+    let resp_b = respond(&device(), &hello(6), &ch_b);
+    let _ = v.on_response(10, pending_a, &resp_a);
+    v.on_response(20, pending_b, &resp_b)
+}
+
 fn main() {
     let cases = [
         Case {
@@ -142,6 +154,11 @@ fn main() {
             name: "unknown device",
             expected: Relay::Open(Reason::UnknownTool),
             run: unknown_device,
+        },
+        Case {
+            name: "overlapping handshakes, same counter",
+            expected: Relay::Open(Reason::ReplayedCounter),
+            run: overlapping_counter,
         },
     ];
 
