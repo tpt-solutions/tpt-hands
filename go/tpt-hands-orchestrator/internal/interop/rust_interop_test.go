@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 // Copyright (c) 2026 TPT Solutions
 
-// Package interop checks the Ack method between tpt-grpc-lite (Go) and the
-// tonic spike in tools/grpc-spike (Rust), in both directions.
+// Package interop checks the Ack method between tpt-grpc-lite (Go) and
+// tpt-hands-grpc (Rust), in both directions.
 package interop
 
 import (
@@ -32,17 +32,16 @@ func repoRoot(t *testing.T) string {
 	return abs
 }
 
-// buildSpike builds one of the grpc-spike binaries with cargo and returns its
-// path. The spike is a standalone crate, so it has its own target directory.
-// The test skips when cargo is missing.
-func buildSpike(t *testing.T, bin string) string {
+// buildRust builds one of the tpt-hands-grpc binaries with cargo and returns its
+// path. The test skips when cargo is missing.
+func buildRust(t *testing.T, bin string) string {
 	t.Helper()
 	if _, err := exec.LookPath("cargo"); err != nil {
 		t.Skip("skipping interop: cargo not on PATH")
 	}
-	spike := filepath.Join(repoRoot(t), "tools", "grpc-spike")
-	build := exec.Command("cargo", "build", "-q", "--bin", bin)
-	build.Dir = spike
+	root := repoRoot(t)
+	build := exec.Command("cargo", "build", "-q", "-p", "tpt-hands-grpc", "--bin", bin)
+	build.Dir = root
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("cargo build %s: %v\n%s", bin, err, out)
 	}
@@ -50,7 +49,7 @@ func buildSpike(t *testing.T, bin string) string {
 	if runtime.GOOS == "windows" {
 		name += ".exe"
 	}
-	return filepath.Join(spike, "target", "debug", name)
+	return filepath.Join(root, "target", "debug", name)
 }
 
 func freeAddr(t *testing.T) string {
@@ -63,9 +62,9 @@ func freeAddr(t *testing.T) string {
 	return lis.Addr().String()
 }
 
-// TestGoClientToTonicServer sends Acknowledge from grpclite to the Rust server.
-func TestGoClientToTonicServer(t *testing.T) {
-	bin := buildSpike(t, "ack-server")
+// TestGoClientToRustServer sends Acknowledge from grpclite to the Rust server.
+func TestGoClientToRustServer(t *testing.T) {
+	bin := buildRust(t, "ack-server")
 	addr := freeAddr(t)
 
 	srv := exec.Command(bin, addr)
@@ -106,10 +105,10 @@ func TestGoClientToTonicServer(t *testing.T) {
 	}
 }
 
-// TestTonicClientToGoServer sends Acknowledge from the Rust client to a
+// TestRustClientToGoServer sends Acknowledge from the Rust client to a
 // grpclite server.
-func TestTonicClientToGoServer(t *testing.T) {
-	bin := buildSpike(t, "ack-client")
+func TestRustClientToGoServer(t *testing.T) {
+	bin := buildRust(t, "ack-client")
 
 	srv := grpclite.NewServer()
 	srv.Handle(ackPath, grpclite.Unary(func(ctx context.Context, req *gen.MorphogenesisRequest) (*gen.MorphogenesisAck, error) {
